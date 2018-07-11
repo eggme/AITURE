@@ -17,7 +17,6 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        int a = 0;
     }
 
     @Override

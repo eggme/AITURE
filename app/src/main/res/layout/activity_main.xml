@@ -14,14 +14,15 @@
         android:layout_marginBottom="10px">
 
         <ImageView
-            android:layout_width="70dp"
+            android:layout_width="80dp"
             android:layout_height="50dp"
+            android:layout_marginTop="3dp"
             android:src="@drawable/main_logo"
             android:layout_marginLeft="30px"/>
 
         <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
             android:layout_marginTop="50px"
             android:layout_marginRight="50px"
             android:layout_alignParentRight="true"
@@ -33,10 +34,11 @@
         android:id="@+id/weather"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_below="@id/top">
 
         <ImageView
-            android:layout_width="match_parent"
+            android:layout_width="400dp"
             android:layout_height="240dp"
             android:layout_marginRight="20px"
             android:layout_marginLeft="20px"
@@ -52,8 +54,8 @@
         android:layout_below="@id/weather">
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="140dp"
+            android:layout_width="400dp"
+            android:layout_height="142dp"
             android:layout_marginRight="20px"
             android:layout_marginLeft="20px"
             android:src="@drawable/music_pannel"/>

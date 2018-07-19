@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWeather();
     }
 
     @Override
@@ -26,5 +27,11 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         view.setSystemUiVisibility(uiOptions);
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
+    }
+
+    public void getWeather() {
+        Parser parser = new Parser();
+        parser.execute(59,75);
+
     }
 }

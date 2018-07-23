@@ -6,30 +6,14 @@ package com.lsj.aiture;
 public class Graph {
     private String name = null;
     private int color = 0xFFFF4081;
-    private float[] coordinateArr = null;
+    private int[] temp = null;
+    private int[] time = null;
     private int bitmapResource = -1;
 
-    public Graph(int color, float[] coordinateArr) {
+    public Graph(int color, int[] temp, int[] time) {
         this.color = color;
-        this.setCoordinateArr(coordinateArr);
-    }
-
-    public Graph(String name, int color, float[] coordinateArr) {
-        this.name = name;
-        this.color = color;
-        this.setCoordinateArr(coordinateArr);
-    }
-
-    public Graph(String name, int color) {
-        this.name = name;
-        this.color = color;
-    }
-
-    public Graph(String name, int color, float[] coordinateArr, int bitmapResource) {
-        this.name = name;
-        this.color = color;
-        this.setCoordinateArr(coordinateArr);
-        this.bitmapResource = bitmapResource;
+        this.temp = temp;
+        this.time = time;
     }
 
     public String getName() {
@@ -48,12 +32,20 @@ public class Graph {
         this.color = color;
     }
 
-    public float[] getCoordinateArr() {
-        return this.coordinateArr;
+    public int[] getTemp() {
+        return temp;
     }
 
-    public void setCoordinateArr(float[] coordinateArr) {
-        this.coordinateArr = coordinateArr;
+    public void setTemp(int[] temp) {
+        this.temp = temp;
+    }
+
+    public int[] getTime() {
+        return time;
+    }
+
+    public void setTime(int[] time) {
+        this.time = time;
     }
 
     public int getBitmapResource() {

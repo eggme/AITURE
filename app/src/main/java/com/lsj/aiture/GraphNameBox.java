@@ -5,17 +5,7 @@ package com.lsj.aiture;
  */
 
 public class GraphNameBox {
-
-        public static final int DEFAULT_NAMEBOX_COLOR = 0xaaF44336;
-        public static final int DEFAULT_NAMEBOX_MARGINTOP = 100;
-        public static final int DEFAULT_NAMEBOX_MARGINRIGHT = 100;
-        public static final int DEFAULT_NAMEBOX_PADDING = 10;
-        public static final int DEFAULT_NAMEBOX_TEXT_SIZE = 20;
-        public static final int DEFAULT_NAMEBOX_TEXT_COLOR = -16777216;
-        public static final int DEFAULT_NAMEBOX_ICON_WIDTH = 30;
-        public static final int DEFAULT_NAMEBOX_ICON_HEIGHT = 10;
-        public static final int DEFAULT_NAMEBOX_TEXT_ICON_MARGIN = 10;
-        public static final int DEFAULT_NAMEBOX_ICON_MARGIN = 10;
+    
         private int nameboxColor = 0xaaF44336;
         private int nameboxMarginTop = 100;
         private int nameboxMarginRight = 100;

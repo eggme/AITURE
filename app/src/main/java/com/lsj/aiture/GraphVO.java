@@ -7,81 +7,24 @@ import java.util.List;
  */
 
 public class GraphVO extends GraphSetting{
-    private int maxValue = 100;
-    private int minValue = 50;
-    private int increment = 10;
+
     private GraphAnimation animation = null;
-    private String[] legendArr = null;
-    private List<Graph> arrGraph = null;
+    private Graph graph = null;
     private int graphBG = -1;
+    public final int INCREMENT = 10;
     private boolean isDrawRegion = false;
 
-    public GraphVO(String[] legendArr, List<Graph> arrGraph) {
-        this.setLegendArr(legendArr);
-        this.arrGraph = arrGraph;
-    }
-
-    public GraphVO(String[] legendArr, List<Graph> arrGraph, int graphBG) {
-        this.setLegendArr(legendArr);
-        this.arrGraph = arrGraph;
-        this.setGraphBG(graphBG);
-    }
-
-    public GraphVO(int paddingBottom, int paddingTop, int paddingLeft, int paddingRight, int marginTop, int marginRight, int maxValue, int increment, String[] legendArr, List<Graph> arrGraph) {
+    public GraphVO(int paddingBottom, int paddingTop, int paddingLeft, int paddingRight, int marginTop, int marginRight, Graph graph) {
         super(paddingBottom, paddingTop, paddingLeft, paddingRight, marginTop, marginRight);
-        this.maxValue = maxValue;
-        this.increment = increment;
-        this.setLegendArr(legendArr);
-        this.arrGraph = arrGraph;
-    } // ���� ȣ���ϴ� �����ڴ� �̰���
-
-    public GraphVO(int paddingBottom, int paddingTop, int paddingLeft, int paddingRight, int marginTop, int marginRight, int maxValue, int increment, String[] legendArr, List<Graph> arrGraph, int graphBG) {
-        super(paddingBottom, paddingTop, paddingLeft, paddingRight, marginTop, marginRight);
-        this.maxValue = maxValue;
-        this.increment = increment;
-        this.setLegendArr(legendArr);
-        this.arrGraph = arrGraph;
-        this.setGraphBG(graphBG);
+        this.graph = graph;
     }
 
-    public int getMaxValue() {
-        return this.maxValue;
+    public Graph getGraph() {
+        return this.graph;
     }
 
-    public int getMinValue() {
-        return this.minValue;
-    }
-
-    public void setMinValue(int minValue) {
-        this.minValue = minValue;
-    }
-
-    public void setMaxValue(int maxValue) {
-        this.maxValue = maxValue;
-    }
-
-    public int getIncrement() {
-        return this.increment;
-    }
-
-    public void setIncrement(int increment) {
-        this.increment = increment;
-    }
-
-    public String[] getLegendArr() {
-        return this.legendArr;
-    }
-
-    public void setLegendArr(String[] legendArr) {
-        this.legendArr = legendArr;
-    }
-
-    public List<Graph> getArrGraph() {
-        return this.arrGraph;
-    }
-
-    public void setArrGraph(List<Graph> arrGraph) {
-        this.arrGraph = arrGraph;
+    public void setGraph(Graph graph) {
+        this.graph = graph;
     }
 
     public int getGraphBG() {

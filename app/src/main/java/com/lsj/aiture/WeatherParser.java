@@ -1,44 +1,36 @@
 package com.lsj.aiture;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
-import java.net.URL;
 import java.util.ArrayList;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 /**
- * Created by LSJ on 2018-07-10.
+ * Created by kyyet on 2018-07-23.
  */
-public class Parser extends AsyncTask<Integer,Void,Document> {
 
-    /*
+public class WeatherParser {
 
-        기상청 OpenAPI를 이용해 날씨정보를 구함
+    private Document document = null;
+    private ArrayList<WeatherDTO> list = null;
 
-    */
-
-    private String url = "http://www.kma.go.kr/wid/queryDFS.jsp?";
-    private String gridx = "gridx=";
-    private String gridy = "gridy=";
+    public  WeatherParser(Document document){
+        this.document = document;
+    }
 
     /*
             파싱한 결과를 리스트에 담음
      */
-    @Override
-    protected void onPostExecute(Document doc) {
-        ArrayList<WeatherDTO> weatherList = new ArrayList<WeatherDTO>();
+    public ArrayList getWeatherData(){
+
+        list = new ArrayList<>();
         try {
 
-            NodeList headerList = doc.getElementsByTagName("header");
+            NodeList headerList = document.getElementsByTagName("header");
 
             Node tm = headerList.item(0);
             Element tmElement = (Element) tm;
@@ -55,7 +47,7 @@ public class Parser extends AsyncTask<Integer,Void,Document> {
             NodeList longitudeNode = tmElement.getElementsByTagName("y");
             String longitude = longitudeNode.item(0).getChildNodes().item(0).getNodeValue();
 
-            NodeList nodeList = doc.getElementsByTagName("data");
+            NodeList nodeList = document.getElementsByTagName("data");
 
             for(int i = 0;i< nodeList.getLength(); i++){
 
@@ -97,48 +89,12 @@ public class Parser extends AsyncTask<Integer,Void,Document> {
                 NodeList rehList = fstElmnt.getElementsByTagName("reh");
                 weatherDTO.setREH(rehList.item(0).getChildNodes().item(0).getNodeValue());
 
-                weatherList.add(weatherDTO);
+                list.add(weatherDTO);
             }
         }catch (NullPointerException e){
-            Log.i("Parser value = ", "Null Point Exception");
+            Log.i("GetWeatherForAPI", "Null Point Exception");
         }
 
-        // 그래프 그리기
-        drawGraph(weatherList);
-
-        super.onPostExecute(doc);
-    }
-
-    /*
-            파싱된 결과를 통해 그래프를 뷰에 그림
-     */
-    private void drawGraph(ArrayList<WeatherDTO> list) {
-
-        Log.i("Parser value = ", list.size()+ " " + list.get(2).getWKKOR());
-
-    }
-
-
-    /*
-           위도와 경도를 통해 날씨 정보 파싱
-     */
-    @Override
-    protected Document doInBackground(Integer... integers) {
-        Document doc = null;
-        url += gridx+integers[0]+"&"+gridy+integers[1];
-        try{
-            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
-
-            URL parsingURL = new URL(url);
-            doc = builder.parse(new InputSource(parsingURL.openStream()));
-            doc.getDocumentElement().normalize();
-
-
-        } catch (Exception e) {
-            Log.i("Parser class error by =", e.getMessage());
-        }
-
-        return doc;
+        return list;
     }
 }

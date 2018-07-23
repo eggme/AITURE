@@ -3,9 +3,16 @@ package com.lsj.aiture;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NoActionBar{
+
+    private WeatherParser weatherParser = null;
+    private RelativeLayout graph;
 
     @Override
     protected void onStart() {
@@ -17,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        graph = (RelativeLayout)findViewById(R.id.graph);
         getWeather();
     }
 
@@ -30,8 +38,20 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     }
 
     public void getWeather() {
-        Parser parser = new Parser();
-        parser.execute(59,75);
+        GetWeatherForAPI getWeatherForAPI = new GetWeatherForAPI();
+        getWeatherForAPI.execute();
+        try {
+            weatherParser = new WeatherParser(getWeatherForAPI.get());
+        }catch (Exception e){
+            Log.i("MainActivity = ", e.getMessage());
+        }
+        drowGraph();
+    }
 
+    private void drowGraph(){
+        ArrayList<WeatherDTO> list = weatherParser.getWeatherData();
+        GraphManager manager = new GraphManager(list);
+        GraphVO vo = manager.getGraph(getApplicationContext());
+        graph.addView(new GraphTextureView(getApplicationContext(), vo));
     }
 }

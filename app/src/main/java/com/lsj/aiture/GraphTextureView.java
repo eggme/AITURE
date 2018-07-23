@@ -29,11 +29,17 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
     private Object mLock = new Object();
     private SurfaceTexture mSurfaceTexture;
     boolean isRun = true;
+    int avg = 0;
 
     public GraphTextureView(Context context, GraphVO vo) {
         super(context);
         this.context = context;
         this.graphVO = vo;
+        int sum = 0;
+        for(int i=0;i<graphVO.getGraph().getTemp().length;i++){
+            sum += graphVO.getGraph().getTime()[i];
+        }
+        avg = sum / graphVO.getGraph().getTemp().length;
         init();
     }
 
@@ -118,7 +124,7 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
             this.animStartTime = -1L;
             this.bg = null;
             this.mCtx = context;
-            int size = GraphTextureView.this.graphVO.getArrGraph().size();
+            int size = GraphTextureView.this.graphVO.getGraph().getTemp().length;
         }
 
         @Override
@@ -184,9 +190,9 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
             }
         }
 
-        public void stopPainting(){
+        public void stopPainting() {
             isRun = false;
-            synchronized(this) {
+            synchronized (this) {
                 this.notify();
             }
         }
@@ -257,7 +263,7 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
                     gapTime = animDuration;
                     this.isDirty = false;
                 }
-                this.anim = (float) (GraphTextureView.this.graphVO.getLegendArr().length * (float) gapTime / (float) animDuration);
+                this.anim = (float) (GraphTextureView.this.graphVO.getGraph().getTime().length * (float) gapTime / (float) animDuration);
             } else {
                 this.isDirty = false;
             }
@@ -265,16 +271,16 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
         }
 
         private void isAnimation() {
-            if (GraphTextureView.this.graphVO.getAnimation() != null) { // vo.setAnimation(new GraphAnimation(GraphAnimation.LINEAR_ANIMATION, GraphAnimation.DEFAULT_DURATION)); �̰ɷ� �ִϸ��̼� ������
+            if (GraphTextureView.this.graphVO.getAnimation() != null) { // vo.setAnimation(new GraphAnimation(GraphAnimation.LINEAR_ANIMATION, GraphAnimation.DEFAULT_DURATION));
                 this.isAnimation = true;
-            } else {        // �׷��� ���� true��ȯ
+            } else {
                 this.isAnimation = false;
             }
 
         }
 
         private void isDrawRegion() {
-            if (GraphTextureView.this.graphVO.isDrawRegion()) { // ���ο��� �̰� true���ִ°� �ּ�ó�������� vo.setDrawRegion(true);
+            if (GraphTextureView.this.graphVO.isDrawRegion()) { // vo.setDrawRegion(true);
                 this.isDrawRegion = true;
             } else {
                 this.isDrawRegion = false;
@@ -303,49 +309,55 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
 
         }
 
+        /*
 
-        private void drawBaseLine(GraphCanvasWrapper graphCanvas) {
-            for (int i = 1; (GraphTextureView.this.graphVO.getIncrement() * i) <= GraphTextureView.this.graphVO.getMaxValue(); ++i) {
-                float y = (float) (this.yLength * GraphTextureView.this.graphVO.getIncrement() * i / (GraphTextureView.this.graphVO.getMaxValue() - GraphTextureView.this.graphVO.getMinValue()));
-                //  yLength�� �Ƹ��� View�� ���� ����
-                // ȭ�� ���� - (paddingBottom + marginTop + marginBottom)
-                graphCanvas.drawLine(0.0F, y, (float) this.chartXLength, y, this.pBaseLineX);
-                //Log.i("LineGraphView",(float)this.chartXLength+":"+y+":"+i);
-            }
-            for (int i = 1; i < 6; i++) { // MyLineGraphView.this.graphVO.getLegendArr().length �̰ɷ��ϸ� �׻� 5���� height ������ �׷����� ����
-                float xGap = (float) (this.xLength / 5); // (MyLineGraphView.this.graphVO.getLegendArr().length-1) �̰ſ��� 4�� �ٲ� �׷��� �Ǽ��� height ���� ������ �Բ� 4���� ������ �׷���
-                float x = xGap * (float) (i);
-                //float x =(float)this.yLength * ((LineGraph)MyLineGraphView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[i] / (float)MyLineGraphView.this.graphVO.getMaxValue();
-                graphCanvas.drawLine(x, 0.0F, x, (float) this.chartYLength, this.pBaseLineY);
-                //Log.i("LineGraphView", (float) this.chartYLength +":"+x+":"+i);
-            }
+                private void drawBaseLine(GraphCanvasWrapper graphCanvas) {
+                    for (int i = 0; i < graphVO.getGraph().getTemp().length; ++i) {
+                        float y = (float) (this.yLength * GraphTextureView.this.graphVO.getIncrement() * i / (GraphTextureView.this.graphVO.getMaxValue() - GraphTextureView.this.graphVO.getMinValue()));
+                        //  yLength�� �Ƹ��� View�� ���� ����
+                        // ȭ�� ���� - (paddingBottom + marginTop + marginBottom)
+                        graphCanvas.drawLine(0.0F, y, (float) this.chartXLength, y, this.pBaseLineX);
+                        //Log.i("LineGraphView",(float)this.chartXLength+":"+y+":"+i);
+                    }
+                    for (int i = 1; i < 6; i++) { // MyLineGraphView.this.graphVO.getLegendArr().length �̰ɷ��ϸ� �׻� 5���� height ������ �׷����� ����
+                        float xGap = (float) (this.xLength / 5); // (MyLineGraphView.this.graphVO.getLegendArr().length-1) �̰ſ��� 4�� �ٲ� �׷��� �Ǽ��� height ���� ������ �Բ� 4���� ������ �׷���
+                        float x = xGap * (float) (i);
+                        //float x =(float)this.yLength * ((LineGraph)MyLineGraphView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[i] / (float)MyLineGraphView.this.graphVO.getMaxValue();
+                        graphCanvas.drawLine(x, 0.0F, x, (float) this.chartYLength, this.pBaseLineY);
+                        //Log.i("LineGraphView", (float) this.chartYLength +":"+x+":"+i);
+                    }
 
-        }
-
+                }
+        */
         private void drawGraphRegionWithoutAnimation(GraphCanvasWrapper graphCanvas) throws NullPointerException {
             boolean isDrawRegion = GraphTextureView.this.graphVO.isDrawRegion();
-            for (int i = 0; i < GraphTextureView.this.graphVO.getArrGraph().size(); ++i) {
+            for (int i = 0; i < GraphTextureView.this.graphVO.getGraph().getTemp().length; ++i) {
                 GraphPath regionPath = new GraphPath(width, height, GraphTextureView.this.graphVO.getPaddingLeft(), GraphTextureView.this.graphVO.getPaddingBottom());
                 boolean firstSet = false;
                 float x = 0.0F;
                 float y = 0.0F;
-                this.p.setColor(((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getColor());  // 그래프선의 색을 지정해줌
-                this.pCircle.setColor(((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getColor());    // 동그라미 포인트 색깔 지정하는거
+                this.p.setColor(GraphTextureView.this.graphVO.getGraph().getColor());  // 그래프선의 색을 지정해줌
+                this.pCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor());    // 동그라미 포인트 색깔 지정하는거
                 float xGap = (float) (this.xLength / 6);//(float)(this.xLength / (((MyLineGraph)MyLineGraphView.this.graphVO.getArrGraph().get(i)).getCoordinateArr().length - 1));
                 // xGap은 전체화면에서 배열길이를 나눈값
                 Log.d("Graph", xGap + " 한개의길이");
 
                 for (int pBg = 0; pBg < 6; ++pBg) { //((MyLineGraph)MyLineGraphView.this.graphVO.getArrGraph().get(i)).getCoordinateArr().length;
-                    if (pBg < ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr().length) {
+                    if (pBg < GraphTextureView.this.graphVO.getGraph().getTemp().length) {
                         if (!firstSet) {// 처음 선을 그림
                             x = xGap * (float) pBg;
-                            y = (float) this.yLength * ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[pBg] / (float) GraphTextureView.this.graphVO.getMaxValue();
+                            //y = (float) this.yLength * ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[pBg] / (float) GraphTextureView.this.graphVO.getMaxValue();
+                            y = (float) (this.yLength / 2) + (( GraphTextureView.this.graphVO.getGraph().getTemp()[i] - avg ) * GraphTextureView.this.graphVO.INCREMENT);
+                            /*
+                                기준 = (화면 높이 / 2)  + ((데이터값 - 데이터값 배열의 평균값) * 증가량)
+                             */
                             regionPath.moveTo(x, 0.0F);
                             regionPath.lineTo(x, y);
                             firstSet = true;
                         } else { // 그다음은 다음 포인트를 찾아서 애니메이션으로 그림
                             x = xGap * (float) pBg;
-                            y = (float) this.yLength * ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[pBg] / (float) GraphTextureView.this.graphVO.getMaxValue();
+                            //y = (float) this.yLength * ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[pBg] / (float) GraphTextureView.this.graphVO.getMaxValue();
+                            y = (float) (this.yLength / 2) + (( GraphTextureView.this.graphVO.getGraph().getTemp()[i] - avg ) * GraphTextureView.this.graphVO.INCREMENT);
                             regionPath.lineTo(x, y);
                             // http://baramziny.tistory.com/75 넘어려워시발머야
                         }
@@ -360,7 +372,7 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
                     var10.setAntiAlias(true);
                     var10.setFilterBitmap(true);
                     var10.setStyle(Paint.Style.FILL);
-                    var10.setColor(((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getColor());
+                    var10.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
                     graphCanvas.getCanvas().drawPath(regionPath, var10);
                 }
             }
@@ -379,29 +391,31 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
             float mode = 0.0F;
             boolean isDrawRegion = GraphTextureView.this.graphVO.isDrawRegion();
 
-            for (int i = 0; i < GraphTextureView.this.graphVO.getArrGraph().size(); ++i) { // 총 5번돔
+            for (int i = 0; i < GraphTextureView.this.graphVO.getGraph().getTime().length; ++i) { // 총 5번돔
                 GraphPath regionPath = new GraphPath(width, height, GraphTextureView.this.graphVO.getPaddingLeft(), GraphTextureView.this.graphVO.getPaddingBottom());
                 boolean firstSet = false; // 처음선은 제자리에서 동그라미가 찍히기 떄문에 걸러줘야함
                 float x = 0.0F;
                 float y = 0.0F;
-                this.p.setColor(((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getColor()); // 선 색깔
-                this.pCircle.setColor(((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getColor()); // 동그라미 포인트 색깔
+                this.p.setColor(GraphTextureView.this.graphVO.getGraph().getColor()); // 선 색깔
+                this.pCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor()); // 동그라미 포인트 색깔
                 float xGap = (float) (this.xLength / 6);//(float)(this.xLength / 5);//(float)(this.xLength / (((MyLineGraph)MyLineGraphView.this.graphVO.getArrGraph().get(i)).getCoordinateArr().length - 1)); // 그려야할 공간 width
                 int var18 = (int) (this.anim / 1.0F);
                 mode = this.anim % 1.0F;
                 boolean isFinish = false;
                 Log.d("Graph", var18 + " 이건뭘까요");
                 for (int x_bg = 0; x_bg <= var18 + 1; ++x_bg) {
-                    if (x_bg < ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr().length) {
+                    if (x_bg < GraphTextureView.this.graphVO.getGraph().getTime().length) {
                         if (!firstSet) {
                             x = xGap * (float) x_bg;
-                            y = (float) this.yLength * ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[x_bg] / (float) GraphTextureView.this.graphVO.getMaxValue();
+                            //y = (float) this.yLength * ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[x_bg] / (float) GraphTextureView.this.graphVO.getMaxValue();
+                            y = (float) (this.yLength / 2) + (( GraphTextureView.this.graphVO.getGraph().getTemp()[i] - avg ) * GraphTextureView.this.graphVO.INCREMENT);
                             regionPath.moveTo(x, 0.0F);
                             regionPath.lineTo(x, y);
                             firstSet = true;
                         } else {
                             x = xGap * (float) x_bg;
-                            y = (float) this.yLength * ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[x_bg] / (float) GraphTextureView.this.graphVO.getMaxValue();
+                            //y = (float) this.yLength * ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[x_bg] / (float) GraphTextureView.this.graphVO.getMaxValue();
+                            y = (float) (this.yLength / 2) + (( GraphTextureView.this.graphVO.getGraph().getTemp()[i] - avg ) * GraphTextureView.this.graphVO.INCREMENT);
                             if (x_bg > var18) {
                                 next_x = x - prev_x;
                                 next_y = y - prev_y;
@@ -429,7 +443,7 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
                     pBg.setAntiAlias(true);
                     pBg.setFilterBitmap(true);
                     pBg.setStyle(Paint.Style.FILL);
-                    pBg.setColor(((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getColor());
+                    pBg.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
                     graphCanvas.getCanvas().drawPath(regionPath, pBg);
                 }
             }
@@ -437,30 +451,32 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
         }
 
         private void drawGraphWithoutAnimation(GraphCanvasWrapper graphCanvas) {
-            for (int i = 0; i < GraphTextureView.this.graphVO.getArrGraph().size(); ++i) {
+            for (int i = 0; i < GraphTextureView.this.graphVO.getGraph().getTime().length; ++i) {
                 GraphPath linePath = new GraphPath(width, height, GraphTextureView.this.graphVO.getPaddingLeft(), GraphTextureView.this.graphVO.getPaddingBottom());
                 new GraphPath(width, height, GraphTextureView.this.graphVO.getPaddingLeft(), GraphTextureView.this.graphVO.getPaddingBottom());
                 boolean firstSet = false;
                 float x = 0.0F;
                 float y = 0.0F;
-                this.p.setColor(((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getColor());
-                this.pCircle.setColor(((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getColor());
+                this.p.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
+                this.pCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
                 float xGap = (float) (this.xLength / 6);//(float)(this.xLength / (((MyLineGraph)MyLineGraphView.this.graphVO.getArrGraph().get(i)).getCoordinateArr().length - 1));
                 Log.d("Graph", xGap + "= 한개의 길이");
                 for (int j = 0; j < 6; ++j) { //((MyLineGraph)MyLineGraphView.this.graphVO.getArrGraph().get(i)).getCoordinateArr().length;
-                    if (j < ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr().length) {
+                    if (j < GraphTextureView.this.graphVO.getGraph().getTemp().length) {
                         if (!firstSet) {
                             x = xGap * (float) j;
-                            y = (float) this.yLength * ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[j] / (float) GraphTextureView.this.graphVO.getMaxValue();
+                            //y = (float) this.yLength * ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[j] / (float) GraphTextureView.this.graphVO.getMaxValue();
+                            y = (float) (this.yLength / 2) + (( GraphTextureView.this.graphVO.getGraph().getTemp()[i] - avg ) * GraphTextureView.this.graphVO.INCREMENT);
                             linePath.moveTo(x, y);
                             firstSet = true;
                         } else {
                             x = xGap * (float) j;
-                            y = (float) this.yLength * ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[j] / (float) GraphTextureView.this.graphVO.getMaxValue();
+                            //y = (float) this.yLength * ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[j] / (float) GraphTextureView.this.graphVO.getMaxValue();
+                            y = (float) (this.yLength / 2) + (( GraphTextureView.this.graphVO.getGraph().getTemp()[i] - avg ) * GraphTextureView.this.graphVO.INCREMENT);
                             linePath.lineTo(x, y);
                         }
-                        this.pCircle.setColor(GraphTextureView.this.graphVO.getArrGraph().get(i).getColor());
-                        this.miniCircle.setColor(GraphTextureView.this.graphVO.getArrGraph().get(i).getColor());
+                        this.pCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
+                        this.miniCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
                         graphCanvas.drawCircle(x, y, 15.0F, this.pCircle); // miniCircle
                         graphCanvas.drawCircle(x, y, 10.0F, this.miniCircle);
                     }
@@ -478,28 +494,30 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
             float next_y = 0.0F;
             float value = 0.0F;
             float mode = 0.0F;
-            for (int i = 0; i < GraphTextureView.this.graphVO.getArrGraph().size(); ++i) {
+            for (int i = 0; i < GraphTextureView.this.graphVO.getGraph().getTime().length; ++i) {
                 GraphPath linePath = new GraphPath(width, height, GraphTextureView.this.graphVO.getPaddingLeft(), GraphTextureView.this.graphVO.getPaddingBottom());
                 new GraphPath(width, height, GraphTextureView.this.graphVO.getPaddingLeft(), GraphTextureView.this.graphVO.getPaddingBottom());
                 boolean firstSet = false;
                 float x = 0.0F;
                 float y = 0.0F;
-                this.p.setColor(((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getColor());
-                this.pCircle.setColor(((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getColor());
+                this.p.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
+                this.pCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
                 float xGap = (float) (this.xLength / 5);//(float)(this.xLength / (((MyLineGraph)MyLineGraphView.this.graphVO.getArrGraph().get(0)).getCoordinateArr().length - 1)); // 0 replace i
                 value = this.anim / 1.0F;
                 mode = this.anim % 1.0F;
 
                 for (int j = 0; (float) j < value + 1.0F; ++j) {
-                    if (j < ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr().length) {
+                    if (j < GraphTextureView.this.graphVO.getGraph().getTemp().length) {
                         if (!firstSet) {
                             x = xGap * (float) j;
-                            y = (float) this.yLength * (((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[j] - GraphTextureView.this.graphVO.getMinValue()) / ((float) GraphTextureView.this.graphVO.getMaxValue() - GraphTextureView.this.graphVO.getMinValue());
+                            //y = (float) this.yLength * (((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[j] - GraphTextureView.this.graphVO.getMinValue()) / ((float) GraphTextureView.this.graphVO.getMaxValue() - GraphTextureView.this.graphVO.getMinValue());
+                            y = (float) (this.yLength / 2) + (( GraphTextureView.this.graphVO.getGraph().getTemp()[i] - avg ) * GraphTextureView.this.graphVO.INCREMENT);
                             linePath.moveTo(x, y);
                             firstSet = true;
                         } else {
                             x = xGap * (float) j;
-                            y = (float) this.yLength * (((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[j] - GraphTextureView.this.graphVO.getMinValue()) / ((float) GraphTextureView.this.graphVO.getMaxValue() - GraphTextureView.this.graphVO.getMinValue());
+                            //y = (float) this.yLength * (((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[j] - GraphTextureView.this.graphVO.getMinValue()) / ((float) GraphTextureView.this.graphVO.getMaxValue() - GraphTextureView.this.graphVO.getMinValue());
+                            y = (float) (this.yLength / 2) + (( GraphTextureView.this.graphVO.getGraph().getTemp()[i] - avg ) * GraphTextureView.this.graphVO.INCREMENT);
                             if ((float) j > value && mode != 0.0F) {
                                 next_x = x - prev_x;
                                 next_y = y - prev_y;
@@ -508,15 +526,9 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
                                 linePath.lineTo(x, y);
                             }
                         }
-                        String text = ((int) ((Graph) GraphTextureView.this.graphVO.getArrGraph().get(i)).getCoordinateArr()[j]) + "cm";
-                        Rect rect = new Rect();
-                        this.pMarkText.setColor(GraphTextureView.this.graphVO.getArrGraph().get(i).getColor());
-                        this.pMarkText.getTextBounds(text, 0, text.length(), rect);
-                        this.pMarkText.setTextSize(30.0F);
-                        graphCanvas.drawText(text, x - 25, y + 30, this.pMarkText);
 
-                        this.pCircle.setColor(GraphTextureView.this.graphVO.getArrGraph().get(i).getColor());
-                        this.miniCircle.setColor(GraphTextureView.this.graphVO.getArrGraph().get(i).getColor());
+                        this.pCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
+                        this.miniCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
                         graphCanvas.drawCircle(x, y, 15.0F, this.pCircle);
                         graphCanvas.drawCircle(x, y, 10.0F, this.miniCircle);
                         prev_x = x;
@@ -528,7 +540,7 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
             }
 
         }
-
+/*
 
         private void drawXMark(GraphCanvasWrapper graphCanvas) {
             float x = 0.0F;
@@ -550,14 +562,18 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
 
         }
 
+        */
+        /*
+                그래프 하단 텍스트
+         */
         private void drawXText(GraphCanvasWrapper graphCanvas) {
             float x = 0.0F;
             float y = 0.0F;
             float xGap = (float) (this.xLength / 5);//(float)(this.xLength / (((MyLineGraph)MyLineGraphView.this.graphVO.getArrGraph().get(0)).getCoordinateArr().length-1));
             float yGap = (float) (this.yLength + 70);
-            for (int i = 0; i < GraphTextureView.this.graphVO.getLegendArr().length; i++) {
+            for (int i = 0; i < GraphTextureView.this.graphVO.getGraph().getTime().length; i++) {
                 x = xGap * (float) i;
-                String text = GraphTextureView.this.graphVO.getLegendArr()[i];
+                String text = (GraphTextureView.this.graphVO.getGraph().getTime()[i])+"시";
                 this.pMarkText.measureText(text);
                 this.pMarkText.setTextSize(30.0F);
                 Rect rect = new Rect();
@@ -567,19 +583,5 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
             }
 
         }
-
-        private void drawYText(GraphCanvasWrapper graphCanvas) {
-            for (int i = 0; (GraphTextureView.this.graphVO.getIncrement() * i) <= GraphTextureView.this.graphVO.getMaxValue(); ++i) {
-                String text = Integer.toString((GraphTextureView.this.graphVO.getIncrement() * i) + GraphTextureView.this.graphVO.getMinValue()); //
-                float y = (float) (this.yLength * (GraphTextureView.this.graphVO.getIncrement() * i) / (GraphTextureView.this.graphVO.getMaxValue() - GraphTextureView.this.graphVO.getMinValue()));
-                this.pMarkText.measureText(text);
-                this.pMarkText.setTextSize(35.0F);
-                Rect rect = new Rect();
-                this.pMarkText.getTextBounds(text, 0, text.length(), rect);
-                graphCanvas.drawText(text, (float) (-(rect.width() + 55)), y - (float) (rect.height() / 2), this.pMarkText);
-            }
-
-        }
     }
-
 }

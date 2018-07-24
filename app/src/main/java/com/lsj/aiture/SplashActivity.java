@@ -10,7 +10,7 @@ import android.widget.ImageView;
 public class SplashActivity extends AppCompatActivity implements NoActionBar{
 
     private ImageView img;
-
+    int i=0;
     @Override
     protected void onStart() {
         super.onStart();

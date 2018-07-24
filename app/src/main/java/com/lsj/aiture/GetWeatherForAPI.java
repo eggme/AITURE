@@ -24,7 +24,7 @@ public class GetWeatherForAPI extends AsyncTask<Void,Void,Document> {
     /*
 
         기상청 OpenAPI를 이용해 날씨정보를 구함
-
+        http://www.kma.go.kr/wid/queryDFS.jsp?gridx=59&gridy=75
     */
     private String url = "http://www.kma.go.kr/wid/queryDFS.jsp?";
     private String gridx = "gridx=";

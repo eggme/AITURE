@@ -6,9 +6,9 @@ package com.lsj.aiture;
 
 public class GraphAnimation {
     public static final int LINEAR_ANIMATION = 1;
-    public static final int DEFAULT_DURATION = 2000;
+    public static final int DEFAULT_DURATION = 3000;
     private int animation = 1;
-    private int duration = 2000;
+    private int duration = 3000;
 
     public GraphAnimation() {
     }

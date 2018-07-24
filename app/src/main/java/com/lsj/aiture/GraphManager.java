@@ -29,7 +29,7 @@ public class GraphManager {
         int paddingRight = GraphVO.DEFAULT_PADDING + 30;
         int marginTop = GraphVO.DEFAULT_MARGIN_TOP;
         int marginRight = GraphVO.DEFAULT_MARGIN_RIGHT;
-        Graph graph = new Graph(0xFFF48FB1, graphData.getTemp(), graphData.getTime());
+        Graph graph = new Graph(0xFFFFFFFF, graphData.getTemp(), graphData.getTime());
 
         vo = new GraphVO(
                 paddingBottom, paddingTop, paddingLeft, paddingRight,

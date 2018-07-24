@@ -29,6 +29,12 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        getWeather();
+    }
+
+    @Override
     public void HideActionbar() {
         View view = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;

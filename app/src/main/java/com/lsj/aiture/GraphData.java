@@ -21,14 +21,10 @@ public class GraphData {
     }
 
     public int[] getTime(){
-
-
         return time;
     }
 
     public int[] getTemp(){
-
-
         return temp;
     }
 

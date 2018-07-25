@@ -5,13 +5,12 @@ package com.lsj.aiture;
  */
 public class Graph {
     private String name = null;
-    private int color = 0xFFFF4081;
+    private int color = 0xFf3b255;
     private int[] temp = null;
     private int[] time = null;
     private int bitmapResource = -1;
 
-    public Graph(int color, int[] temp, int[] time) {
-        this.color = color;
+    public Graph(int[] temp, int[] time) {
         this.temp = temp;
         this.time = time;
     }

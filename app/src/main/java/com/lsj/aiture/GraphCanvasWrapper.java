@@ -26,13 +26,6 @@ public class GraphCanvasWrapper {
         this.mCanvas.drawCircle(this.mMt.calcX(cx), this.mMt.calcY(cy), radius, paint);
     }
 
-    public void drawArc(RectF oval, float startAngle, float sweepAngle, boolean useCenter, Paint paint) {
-        if(this.mCanvas != null) {
-            this.mCanvas.drawArc(oval, startAngle, sweepAngle, true, paint);
-        }
-
-    }
-
     public void drawLine(float startX, float startY, float stopX, float stopY, Paint paint) {
         this.mCanvas.drawLine(this.mMt.calcX(startX), this.mMt.calcY(startY), this.mMt.calcX(stopX), this.mMt.calcY(stopY), paint);
     }

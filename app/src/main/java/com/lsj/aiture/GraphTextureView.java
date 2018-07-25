@@ -85,6 +85,7 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
 
     class DrawThread extends Thread {
         boolean isDirty = true;
+        int bgcolor = 0x99000000;
         int xLength;
         int yLength;
         int chartXLength;
@@ -130,11 +131,11 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
             this.animStartTime = System.currentTimeMillis();
             while (isRun) { // isRun Default true
                 if (!this.isDirty) { // isDirty Default true
-                    try {
-                        Thread.sleep(10L);
-                    } catch (InterruptedException var13) {
-                        var13.printStackTrace();
-                    }
+//                    try {
+//                        Thread.sleep(100L);
+//                    } catch (InterruptedException var13) {
+//                        var13.printStackTrace();
+//                    }
                 } else {
                     Surface surface = null;
                     SurfaceTexture surfaceTexture = mSurfaceTexture;
@@ -143,15 +144,19 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
                         return;
                     }
                     surface = new Surface(surfaceTexture);
+                    Paint bg = new Paint();
+                    bg.setARGB(0xf2, 0, 0, 0);
                     Rect dirty = new Rect(0, 0, width, height);
                     canvas = surface.lockCanvas(dirty);
                     graphCanvasWrapper = new GraphCanvasWrapper(canvas, width, height, GraphTextureView.this.graphVO.getPaddingLeft(), GraphTextureView.this.graphVO.getPaddingBottom());
                     synchronized (GraphTextureView.touchLock) {
                         try {
-                            canvas.drawColor(getResources().getColor(R.color.graphBG));
+                            this.calcTimePass();
+                            //canvas.drawColor(bgcolor);
                             this.drawXText(graphCanvasWrapper);
                             this.drawTempText(graphCanvasWrapper);
                             this.drawGraph(graphCanvasWrapper);
+                            GraphTextureView.this.setAlpha(0.6f);
                         } catch (Exception var15) {
                             var15.printStackTrace();
                         } finally {
@@ -160,13 +165,13 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
                             }
                         }
                     }
-                    try {
-                        Thread.sleep(10L);
-                    } catch (InterruptedException var14) {
-                        var14.printStackTrace();
-                    }
+//                    try {
+//                        Thread.sleep(0L);
+//                    } catch (InterruptedException var14) {
+//                        var14.printStackTrace();
+//                    }
 
-                    this.calcTimePass();
+
                     surface.release();
                 }
             }
@@ -240,7 +245,7 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
             if (this.isAnimation) {
                 this.drawGraphWithAnimation(graphCanvas);
             } else {
-                this.drawGraphWithoutAnimation(graphCanvas);
+                //this.drawGraphWithoutAnimation(graphCanvas);
             }
 
         }
@@ -322,9 +327,7 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
                             }
                         }
 
-                        //.pCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
                         this.miniCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
-                        //graphCanvas.drawCircle(x, y, 15.0F, this.pCircle);
                         graphCanvas.drawCircle(x, y, 10.0F, this.miniCircle);
                         prev_x = x;
                         prev_y = y;

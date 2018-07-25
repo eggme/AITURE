@@ -31,38 +31,54 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top"
+        android:background="@drawable/rounded"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20px"
+        android:layout_marginLeft="20px"
+        android:elevation="10dp">
+
+    <RelativeLayout
         android:id="@+id/weather"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/top">
+        android:layout_height="140dp">
 
         <RelativeLayout
             android:layout_width="400dp"
             android:layout_height="140dp"
-            android:layout_marginRight="20px"
-            android:layout_marginLeft="20px"
-            android:background="#9000">
+            >
 
             <RelativeLayout
                 android:id="@+id/gpsline"
                 android:layout_width="match_parent"
                 android:layout_height="30dp">
 
+                <ImageView
+                    android:id="@+id/gps"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="18dp"
+                    android:src="@drawable/mini_gps"
+                    android:layout_marginLeft="20dp"/>
+
                 <TextView
+                    android:layout_toRightOf="@id/gps"
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
                     android:text="광주광역시 북구"
-                    android:textSize="10dp"
+                    android:textSize="12dp"
                     android:textColor="#fff"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="30dp"/>
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="10dp"/>
 
             </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/weathers"
-                android:layout_width="150dp"
+                android:layout_width="140dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/gpsline">
 
@@ -70,7 +86,7 @@
                     android:id="@+id/weather_big"
                     android:layout_width="65dp"
                     android:layout_height="65dp"
-                    android:layout_marginLeft="30dp"
+                    android:layout_centerHorizontal="true"
                     android:paddingTop="10dp"
                     android:src="@drawable/rain_big"/>
 
@@ -79,7 +95,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="5dp"
-                    android:layout_marginLeft="43dp"
+                    android:layout_centerHorizontal="true"
                     android:textColor="#fff"
                     android:textSize="18dp"
                     android:text="흐림"
@@ -87,7 +103,8 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="100dp"
+                android:id="@+id/temp_layout"
+                android:layout_width="120dp"
                 android:layout_height="match_parent"
                 android:layout_toRightOf="@id/weathers">
 
@@ -97,6 +114,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:text="29"
+                    android:paddingTop="30dp"
                     android:textSize="70dp"
                     android:textColor="#fff"/>
                 <TextView
@@ -105,11 +123,96 @@
                     android:text="º"
                     android:layout_toRightOf="@id/temp"
                     android:layout_centerVertical="true"
-                    android:paddingBottom="40dp"
+                    android:paddingBottom="20dp"
                     android:textSize="20dp"
                     android:textColor="#fff"/>
             </RelativeLayout>
-            
+
+            <RelativeLayout
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_toRightOf="@id/temp_layout">
+
+                <TextView
+                    android:id="@+id/min"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="10dp"
+                    android:textColor="#606367"
+                    android:text="MIN : "/>
+
+                <TextView
+                    android:id="@+id/min_temp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/min"
+                    android:layout_centerVertical="true"
+                    android:textSize="10dp"
+                    android:textColor="#f3b255"
+                    android:text="30"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/min_temp"
+                    android:paddingBottom="4dp"
+                    android:layout_centerVertical="true"
+                    android:textSize="10dp"
+                    android:textColor="#f3b255"
+                    android:text="º"/>
+
+                <TextView
+                    android:id="@+id/max"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/min"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="10dp"
+                    android:textColor="#606367"
+                    android:text="MIN : "/>
+
+                <TextView
+                    android:id="@+id/max_temp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/max"
+                    android:layout_below="@id/min_temp"
+                    android:textSize="10dp"
+                    android:textColor="#f3b255"
+                    android:text="40"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/max_temp"
+                    android:layout_below="@id/min_temp"
+                    android:paddingBottom="4dp"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="10dp"
+                    android:textColor="#f3b255"
+                    android:text="º"/>
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true">
+
+                <View
+                    android:layout_width="320dp"
+                    android:layout_height="2dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="#606367"
+                    />
+
+            </RelativeLayout>
+
             </RelativeLayout>
     </RelativeLayout>
 
@@ -119,22 +222,24 @@
         android:layout_height="120dp"
         android:layout_marginRight="20px"
         android:layout_marginLeft="20px"
-        android:layout_marginBottom="20dp"
-        android:background="#9000"
         android:layout_below="@id/weather"/>
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/music"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/graph">
+        android:layout_below="@id/wrapper"
+        android:layout_marginTop="12dp"
+        android:elevation="10dp">
 
         <RelativeLayout
             android:layout_width="400dp"
             android:layout_height="142dp"
             android:layout_marginRight="20px"
             android:layout_marginLeft="20px"
-            android:background="#9000">
+            android:background="@drawable/rounded">
 
         </RelativeLayout>
 

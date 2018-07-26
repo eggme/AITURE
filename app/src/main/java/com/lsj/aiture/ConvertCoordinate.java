@@ -7,6 +7,7 @@ public class ConvertCoordinate {
 
     /*
         위도와 경도를 기상청에서 제공하는 X,Y 좌표로 변환
+        출처 - http://fronteer.kr/service/kmaxy
      */
 
     public LatXLngY convertGRID_GPS(int mode, double lat_X, double lng_Y) {

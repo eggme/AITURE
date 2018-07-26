@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     private TextView temp;
     private TextView weather_kor;
     private TextView pop_data;
+    private TextView reh_data;
     private ArrayList<WeatherDTO> list;
     private GPSController controller;
     private ConvertCoordinate convertCoordinate;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         temp = (TextView)findViewById(R.id.temp);
         weather_kor = (TextView)findViewById(R.id.weather_kor);
         pop_data = (TextView)findViewById(R.id.pop_data);
+        reh_data = (TextView)findViewById(R.id.reh_data);
         startSystem();
     }
 
@@ -79,8 +81,11 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     }
 
     public void getWeather() {
-        GetWeatherForAPI getWeatherForAPI = new GetWeatherForAPI();
-        getWeatherForAPI.execute(((int)latXLngY.getX()), ((int)latXLngY.getY()));
+        GetWeatherForAPI getWeatherForAPI = new GetWeatherForAPI(((int)latXLngY.getX()), ((int)latXLngY.getY()));
+        ConvertAddress convertAddress = new ConvertAddress(getApplicationContext());
+        String address = convertAddress.getAddress(controller.getLatitude(), controller.getLongtitude());
+        Log.i("Address", address);
+        getWeatherForAPI.execute();
         try {
             weatherParser = new WeatherParser(getWeatherForAPI.get());
         }catch (Exception e){
@@ -94,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         temp.setText(((int)Float.parseFloat(list.get(0).getTEMP())) + "");
         weather_kor.setText(list.get(0).getWKKOR());
         pop_data.setText(list.get(0).getPop());
+        reh_data.setText(list.get(0).getREH());
     }
 
     private void drowGraph(){

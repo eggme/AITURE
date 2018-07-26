@@ -225,6 +225,37 @@
                     android:textColor="#f3b255"
                     android:text="%"/>
 
+                <TextView
+                    android:id="@+id/reh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/pop"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="10dp"
+                    android:textColor="#606367"
+                    android:text="습도 : "/>
+
+                <TextView
+                    android:id="@+id/reh_data"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/reh"
+                    android:layout_below="@id/pop_data"
+                    android:textSize="10dp"
+                    android:textColor="#f3b255"
+                    android:text="70"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/reh_data"
+                    android:layout_below="@id/pop_data"
+                    android:paddingBottom="4dp"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="10dp"
+                    android:textColor="#f3b255"
+                    android:text="%"/>
+
 
             </RelativeLayout>
 

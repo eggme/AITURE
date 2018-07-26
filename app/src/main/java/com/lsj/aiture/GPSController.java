@@ -45,8 +45,6 @@ public class GPSController extends Service implements LocationListener {
     public GPSController(Context context){
         this.context = context;
         getLocation();
-        Log.i("GPSInfo", getLatitude() + " : "
-                + getLongtitude());
     }
 
     @TargetApi(23)

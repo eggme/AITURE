@@ -1,6 +1,7 @@
 package com.lsj.aiture;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v7.app.ActionBar;
@@ -10,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.tsengvn.typekit.TypekitContextWrapper;
 
 import java.util.ArrayList;
 
@@ -191,5 +194,10 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         if (isAccessFineLocation && isAccessCoarseLocation) {
             isPermission = true;
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(TypekitContextWrapper.wrap(newBase));
     }
 }

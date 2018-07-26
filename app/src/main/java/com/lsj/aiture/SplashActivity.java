@@ -1,11 +1,14 @@
 package com.lsj.aiture;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+
+import com.tsengvn.typekit.TypekitContextWrapper;
 
 public class SplashActivity extends AppCompatActivity implements NoActionBar{
 
@@ -47,5 +50,10 @@ public class SplashActivity extends AppCompatActivity implements NoActionBar{
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(TypekitContextWrapper.wrap(newBase));
     }
 }

@@ -19,7 +19,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 /**
  * Created by LSJ on 2018-07-10.
  */
-public class GetWeatherForAPI extends AsyncTask<Void,Void,Document> {
+public class GetWeatherForAPI extends AsyncTask<Integer,Void,Document> {
 
     /*
 
@@ -35,11 +35,11 @@ public class GetWeatherForAPI extends AsyncTask<Void,Void,Document> {
            GPSController -> GPS를 사용하여 현재 위도와 경도를 제공
      */
     @Override
-    protected Document doInBackground(Void... voids) {
+    protected Document doInBackground(Integer... integers) {
         Document doc = null;
-        GPSController controller = new GPSController();
 
-        url += gridx+controller.getLatitude()+"&"+gridy+controller.getLontitude();
+        url += gridx+integers[0]+"&"+gridy+integers[1];
+        Log.i("GetWeather", url);
         try{
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = builderFactory.newDocumentBuilder();

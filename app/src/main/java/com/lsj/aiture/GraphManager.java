@@ -3,7 +3,6 @@ package com.lsj.aiture;
 import android.content.Context;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by kyyet on 2018-07-23.
@@ -11,9 +10,9 @@ import java.util.List;
 
 public class GraphManager {
 
-    private ArrayList<WeatherDTO> list = null;
+    private ArrayList<WeatherVO> list = null;
 
-    public GraphManager(ArrayList<WeatherDTO> list){
+    public GraphManager(ArrayList<WeatherVO> list){
         this.list = list;
     }
 

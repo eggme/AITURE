@@ -8,11 +8,11 @@ import java.util.ArrayList;
 
 public class GraphData {
 
-    ArrayList<WeatherDTO> list = null;
+    ArrayList<WeatherVO> list = null;
     private int[] temp = new int[6];
     private int[] time = new int[6];
 
-    public GraphData(ArrayList<WeatherDTO> list){
+    public GraphData(ArrayList<WeatherVO> list){
         this.list = list;
         for(int i=0;i<6;i++){
             temp[i] = (int)Float.parseFloat(list.get(i).getTEMP());

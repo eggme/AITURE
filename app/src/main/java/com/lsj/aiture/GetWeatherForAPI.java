@@ -21,21 +21,19 @@ import javax.xml.parsers.DocumentBuilderFactory;
  */
 public class GetWeatherForAPI extends AsyncTask<Void,Void,Document> {
 
+    private String url;
 
     public GetWeatherForAPI(int x , int y){
-        gridx+=x+"&";
-        gridy+=y;
+        url = "http://www.kma.go.kr/wid/queryDFS.jsp?";
+        String gridx = "gridx="+x+"&";
+        String gridy = "gridy="+y;
         url += gridx + gridy;
     }
-
     /*
 
         기상청 OpenAPI를 이용해 날씨정보를 구함
         http://www.kma.go.kr/wid/queryDFS.jsp?gridx=59&gridy=75
     */
-    private String url = "http://www.kma.go.kr/wid/queryDFS.jsp?";
-    private String gridx = "gridx=";
-    private String gridy = "gridy=";
 
     /*
            위도와 경도를 통해 날씨 정보 파싱
@@ -44,20 +42,18 @@ public class GetWeatherForAPI extends AsyncTask<Void,Void,Document> {
     @Override
     protected Document doInBackground(Void... voids) {
         Document doc = null;
-        Log.i("GetWeather", url);
         try{
-            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
+             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+             DocumentBuilder builder = builderFactory.newDocumentBuilder();
 
-            URL parsingURL = new URL(url);
-            doc = builder.parse(new InputSource(parsingURL.openStream()));
-            doc.getDocumentElement().normalize();
+             URL parsingURL = new URL(url);
+             doc = builder.parse(new InputSource(parsingURL.openStream()));
+             doc.getDocumentElement().normalize();
 
 
         } catch (Exception e) {
             Log.i("GetWeatherForAPI", e.getMessage());
         }
-
         return doc;
     }
 }

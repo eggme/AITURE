@@ -4,7 +4,7 @@ package com.lsj.aiture;
  * Created by kyyet on 2018-07-19.
  */
 
-public class WeatherDTO {
+public class WeatherVO {
 
     private String LATITUDE;
     private String LONGITUDE;

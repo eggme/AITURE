@@ -137,18 +137,18 @@
                     android:id="@+id/min"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_marginTop="30dp"
                     android:layout_centerHorizontal="true"
                     android:textSize="10dp"
                     android:textColor="#606367"
-                    android:text="MIN : "/>
+                    android:text="최저기온 : "/>
 
                 <TextView
                     android:id="@+id/min_temp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/min"
-                    android:layout_centerVertical="true"
+                    android:layout_marginTop="30dp"
                     android:textSize="10dp"
                     android:textColor="#f3b255"
                     android:text="30"/>
@@ -158,7 +158,7 @@
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/min_temp"
                     android:paddingBottom="4dp"
-                    android:layout_centerVertical="true"
+                    android:layout_marginTop="30dp"
                     android:textSize="10dp"
                     android:textColor="#f3b255"
                     android:text="º"/>
@@ -171,7 +171,7 @@
                     android:layout_centerHorizontal="true"
                     android:textSize="10dp"
                     android:textColor="#606367"
-                    android:text="MIN : "/>
+                    android:text="최고기온 : "/>
 
                 <TextView
                     android:id="@+id/max_temp"
@@ -256,6 +256,25 @@
                     android:textColor="#f3b255"
                     android:text="%"/>
 
+                <TextView
+                    android:id="@+id/finedust"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/reh"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="10dp"
+                    android:textColor="#606367"
+                    android:text="미세먼지 : "/>
+
+                <TextView
+                    android:id="@+id/finedust_data"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/finedust"
+                    android:layout_below="@id/reh_data"
+                    android:textSize="10dp"
+                    android:textColor="#f3b255"
+                    android:text="70"/>
 
             </RelativeLayout>
 

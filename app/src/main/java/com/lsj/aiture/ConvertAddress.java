@@ -27,11 +27,21 @@ public class ConvertAddress {
                     //한좌표에 대해 두개이상의 이름이 존재할수있기에 주소배열을 리턴받기 위해 최대갯수 설정
                     convertAddresses = geocoder.getFromLocation(lat, lng, 1);
 
+
                     if (convertAddresses != null && convertAddresses.size() > 0) {
                         // 주소 받아오기
-                        String currentLocationAddress = convertAddresses.get(0).getAddressLine(0).toString();
-                        nowAddress  = currentLocationAddress;
+                        //String currentLocationAddress = convertAddresses.get(0).getAddressLine(0).toString();
 
+                        String siName = convertAddresses.get(0).getAdminArea();
+                        siName = siName.substring(0,siName.lastIndexOf("광"));
+                        Log.i("ConvertAddress", siName);
+                        if(siName.length() > 2){
+                            siName = siName.substring(0, siName.lastIndexOf("특"));
+                        }
+                        String goName = convertAddresses.get(0).getLocality();
+                        String currentLocationAddress = siName+ "," + goName;
+                        nowAddress  = currentLocationAddress;
+                        Log.i("ConvertAddress", currentLocationAddress);
                     }
                 }
 

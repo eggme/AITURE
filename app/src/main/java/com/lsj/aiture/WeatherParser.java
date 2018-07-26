@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class WeatherParser {
 
     private Document document = null;
-    private ArrayList<WeatherDTO> list = null;
+    private ArrayList<WeatherVO> list = null;
 
     public  WeatherParser(Document document){
         this.document = document;
@@ -54,50 +54,50 @@ public class WeatherParser {
                 Node node = nodeList.item(i);
                 Element fstElmnt = (Element) node;
 
-                WeatherDTO weatherDTO = new WeatherDTO();
+                WeatherVO weatherVO = new WeatherVO();
 
                 // 위도
-                weatherDTO.setLATITUDE(latitude);
+                weatherVO.setLATITUDE(latitude);
 
                 // 경도
-                weatherDTO.setLONGITUDE(longitude);
+                weatherVO.setLONGITUDE(longitude);
 
                 // 시간
-                weatherDTO.setTIME(time);
+                weatherVO.setTIME(time);
 
                 // 시간
                 NodeList hourNode = fstElmnt.getElementsByTagName("hour");
-                weatherDTO.setHOUR(hourNode.item(0).getChildNodes().item(0).getNodeValue());
+                weatherVO.setHOUR(hourNode.item(0).getChildNodes().item(0).getNodeValue());
 
                 // 현재 기온
                 NodeList tempNode = fstElmnt.getElementsByTagName("temp");
-                weatherDTO.setTEMP(tempNode.item(0).getChildNodes().item(0).getNodeValue());
+                weatherVO.setTEMP(tempNode.item(0).getChildNodes().item(0).getNodeValue());
 
                 NodeList popNode = fstElmnt.getElementsByTagName("pop");
-                weatherDTO.setPop(popNode.item(0).getChildNodes().item(0).getNodeValue());
+                weatherVO.setPop(popNode.item(0).getChildNodes().item(0).getNodeValue());
 
                 // 최고 기온
                 NodeList tmxNode = fstElmnt.getElementsByTagName("tmx");
-                weatherDTO.setTMX(tmxNode.item(0).getChildNodes().item(0).getNodeValue());
+                weatherVO.setTMX(tmxNode.item(0).getChildNodes().item(0).getNodeValue());
 
                 // 최저기온
                 NodeList tmnNode = fstElmnt.getElementsByTagName("tmn");
-                weatherDTO.setTMN(tmnNode.item(0).getChildNodes().item(0).getNodeValue());
+                weatherVO.setTMN(tmnNode.item(0).getChildNodes().item(0).getNodeValue());
 
                 // 날씨
                 NodeList wfKorNode = fstElmnt.getElementsByTagName("wfKor");
-                weatherDTO.setWKKOR(wfKorNode.item(0).getChildNodes().item(0).getNodeValue());
+                weatherVO.setWKKOR(wfKorNode.item(0).getChildNodes().item(0).getNodeValue());
 
                 // 습도
                 NodeList rehList = fstElmnt.getElementsByTagName("reh");
-                weatherDTO.setREH(rehList.item(0).getChildNodes().item(0).getNodeValue());
+                weatherVO.setREH(rehList.item(0).getChildNodes().item(0).getNodeValue());
 
-                list.add(weatherDTO);
+                list.add(weatherVO);
             }
         }catch (NullPointerException e){
             Log.i("GetWeatherForAPI", "Null Point Exception");
         }
-
+        Log.i("WeatherParser", list.size()+" ");
         return list;
     }
 }

@@ -194,6 +194,37 @@
                     android:textColor="#f3b255"
                     android:text="º"/>
 
+                <TextView
+                    android:id="@+id/pop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/max"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="10dp"
+                    android:textColor="#606367"
+                    android:text="강수확률 : "/>
+
+                <TextView
+                    android:id="@+id/pop_data"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/pop"
+                    android:layout_below="@id/max_temp"
+                    android:textSize="10dp"
+                    android:textColor="#f3b255"
+                    android:text="70"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/pop_data"
+                    android:layout_below="@id/max_temp"
+                    android:paddingBottom="4dp"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="10dp"
+                    android:textColor="#f3b255"
+                    android:text="%"/>
+
 
             </RelativeLayout>
 

@@ -73,6 +73,9 @@ public class WeatherParser {
                 NodeList tempNode = fstElmnt.getElementsByTagName("temp");
                 weatherDTO.setTEMP(tempNode.item(0).getChildNodes().item(0).getNodeValue());
 
+                NodeList popNode = fstElmnt.getElementsByTagName("pop");
+                weatherDTO.setPop(popNode.item(0).getChildNodes().item(0).getNodeValue());
+
                 // 최고 기온
                 NodeList tmxNode = fstElmnt.getElementsByTagName("tmx");
                 weatherDTO.setTMX(tmxNode.item(0).getChildNodes().item(0).getNodeValue());

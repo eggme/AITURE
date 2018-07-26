@@ -11,10 +11,19 @@ public class WeatherDTO {
     private String HOUR;
     private String TIME;
     private String TEMP;
+    private String pop;
     private String TMX;
     private String TMN;
     private String WKKOR;
     private String REH;
+
+    public String getPop() {
+        return pop;
+    }
+
+    public void setPop(String pop) {
+        this.pop = pop;
+    }
 
     public String getLATITUDE() {
         return LATITUDE;

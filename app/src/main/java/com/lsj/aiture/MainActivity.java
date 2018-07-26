@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     private RelativeLayout graph;
     private TextView temp;
     private TextView weather_kor;
+    private TextView pop_data;
     private ArrayList<WeatherDTO> list;
     private GPSController controller;
     private ConvertCoordinate convertCoordinate;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         graph = (RelativeLayout)findViewById(R.id.graph);
         temp = (TextView)findViewById(R.id.temp);
         weather_kor = (TextView)findViewById(R.id.weather_kor);
+        pop_data = (TextView)findViewById(R.id.pop_data);
         startSystem();
     }
 
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     private void weatherSetting() {
         temp.setText(((int)Float.parseFloat(list.get(0).getTEMP())) + "");
         weather_kor.setText(list.get(0).getWKKOR());
+        pop_data.setText(list.get(0).getPop());
     }
 
     private void drowGraph(){

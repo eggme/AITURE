@@ -182,9 +182,10 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
             this.p.setFlags(1);
             this.p.setAntiAlias(true);
             this.p.setFilterBitmap(true);
-            this.p.setColor(0x30FFFFFF);
+            this.p.setColor(0xFFFFFF);
             this.p.setStrokeWidth(5.0F);
             this.p.setStyle(Paint.Style.STROKE);
+            this.p.setAlpha(0x00);
             this.pCircle = new Paint();
             this.pCircle.setFlags(1);
             this.pCircle.setAntiAlias(true);

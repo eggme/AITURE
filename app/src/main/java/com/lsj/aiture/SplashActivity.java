@@ -60,11 +60,11 @@ public class SplashActivity extends AppCompatActivity implements NoActionBar{
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*
+
                 Intent in = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(in);
                 finish();
-                */
+
             }
         });
     }

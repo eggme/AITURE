@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,14 +22,15 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     private WeatherParser weatherParser = null;
     private FinedustParser finedustParser = null;
 
+    private RelativeLayout wrapper;
     private RelativeLayout graph;
+    private LinearLayout circularchart;
+    private RelativeLayout finedust;
+    private RelativeLayout humidity;
+    private RelativeLayout precipitation;
     private TextView temp;
-    private TextView min_temp;
-    private TextView max_temp;
     private TextView weather_kor;
-    private TextView pop_data;
-    private TextView reh_data;
-    private TextView finedust_data;
+    private CircularOutlineGraph circularOutlineGraph;
 
     private ArrayList<WeatherVO> weatherList;
     private ArrayList<FinedustVO> finedustList;
@@ -55,13 +57,21 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         graph = (RelativeLayout)findViewById(R.id.graph);
+        wrapper = (RelativeLayout)findViewById(R.id.wrapper);
+        circularchart = (LinearLayout) findViewById(R.id.circularchart);
+        finedust = (RelativeLayout)findViewById(R.id.finedust);
+        humidity = (RelativeLayout)findViewById(R.id.humidity);
+        precipitation = (RelativeLayout)findViewById(R.id.precipitation);
         temp = (TextView)findViewById(R.id.temp);
-        min_temp = (TextView)findViewById(R.id.min_temp);
-        max_temp = (TextView)findViewById(R.id.max_temp);
         weather_kor = (TextView)findViewById(R.id.weather_kor);
-        pop_data = (TextView)findViewById(R.id.pop_data);
-        reh_data = (TextView)findViewById(R.id.reh_data);
-        finedust_data = (TextView)findViewById(R.id.finedust_data);
+
+        circularOutlineGraph = new CircularOutlineGraph(getApplicationContext());
+        finedust.addView(circularOutlineGraph);
+        circularOutlineGraph = new CircularOutlineGraph(getApplicationContext());
+        humidity.addView(circularOutlineGraph);
+        circularOutlineGraph = new CircularOutlineGraph(getApplicationContext());
+        precipitation.addView(circularOutlineGraph);
+
         startSystem();
     }
 
@@ -126,17 +136,30 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
 
     private void weatherSetting(String guName) {
         temp.setText(((int)Float.parseFloat(weatherList.get(0).getTEMP())) + "");
-        min_temp.setText(weather.getMinTemp(weatherList));
-        max_temp.setText(weather.getMaxTemp(weatherList));
         weather_kor.setText(weatherList.get(0).getWKKOR());
-        pop_data.setText(weatherList.get(0).getPop());
-        reh_data.setText(weatherList.get(0).getREH());
+        wrapper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("MainActivity" , "Click");
+                if(graph.getVisibility() == View.GONE) {
+                    Log.i("MainActivity" , "VISIBLE");
+                    graph.setVisibility(View.VISIBLE);
+                    circularchart.setVisibility(View.VISIBLE);
+                }else{
+                    Log.i("MainActivity" , "GONE");
+                    graph.setVisibility(View.GONE);
+                    circularchart.setVisibility(View.GONE);
+                }
+            }
+        });
+        /*
         int index = findGu(guName);
         if(index <= 0){
             index = 0;
         }
         FinedustDistinction finedustDistinction = new FinedustDistinction(Integer.parseInt(finedustList.get(index).getPm10Value()));
         finedust_data.setText(finedustDistinction.getFinedust());
+        */
     }
 
     private int findGu(String guName) {

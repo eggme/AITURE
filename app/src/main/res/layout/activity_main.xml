@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
@@ -36,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/top"
         android:background="@drawable/rounded"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="20px"
         android:layout_marginLeft="20px"
         android:elevation="10dp">
@@ -44,266 +45,119 @@
     <RelativeLayout
         android:id="@+id/weather"
         android:layout_width="match_parent"
-        android:layout_height="140dp">
-
-        <RelativeLayout
-            android:layout_width="400dp"
-            android:layout_height="140dp"
-            >
+        android:layout_height="280dp">
 
             <RelativeLayout
                 android:id="@+id/gpsline"
                 android:layout_width="match_parent"
-                android:layout_height="30dp">
-
-                <ImageView
-                    android:id="@+id/gps"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginTop="18dp"
-                    android:src="@drawable/mini_gps"
-                    android:layout_marginLeft="20dp"/>
+                android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_toRightOf="@id/gps"
+                    android:id="@+id/addr"
                     android:layout_width="wrap_content"
-                    android:layout_height="20dp"
-                    android:text="광주광역시 북구"
-                    android:textSize="12dp"
+                    android:layout_height="wrap_content"
+                    android:text="광주광역시"
+                    android:textSize="24dp"
                     android:textColor="#fff"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginLeft="10dp"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/weathers"
-                android:layout_width="140dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/gpsline">
-
-                <ImageView
-                    android:id="@+id/weather_big"
-                    android:layout_width="65dp"
-                    android:layout_height="65dp"
-                    android:layout_centerHorizontal="true"
-                    android:paddingTop="10dp"
-                    android:src="@drawable/rain_big"/>
+                    android:layout_marginTop="35dp"
+                    android:layout_centerHorizontal="true" />
 
                 <TextView
                     android:id="@+id/weather_kor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="5dp"
+                    android:paddingTop="10dp"
                     android:layout_centerHorizontal="true"
                     android:textColor="#fff"
-                    android:textSize="18dp"
+                    app:font="custom1"
+                    android:textSize="14dp"
                     android:text="흐림"
-                    android:layout_below="@id/weather_big" />
-            </RelativeLayout>
+                    android:layout_below="@id/addr" />
 
+            </RelativeLayout>
             <RelativeLayout
                 android:id="@+id/temp_layout"
-                android:layout_width="120dp"
-                android:layout_height="match_parent"
-                android:layout_toRightOf="@id/weathers">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/gpsline">
 
                 <TextView
                     android:id="@+id/temp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true"
+                    app:font="custom1"
                     android:text="29"
-                    android:paddingTop="30dp"
-                    android:textSize="70dp"
+                    android:textSize="100dp"
                     android:textColor="#fff"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="º"
                     android:layout_toRightOf="@id/temp"
-                    android:layout_centerVertical="true"
-                    android:paddingBottom="20dp"
-                    android:textSize="20dp"
+                    android:paddingBottom="100dp"
+                    app:font="custom1"
+                    android:layout_marginLeft="5dp"
+                    android:textSize="30dp"
                     android:textColor="#fff"/>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="140dp"
-                android:layout_height="140dp"
-                android:layout_toRightOf="@id/temp_layout">
 
                 <TextView
-                    android:id="@+id/min"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
+                    android:text="오늘 저녁에는 구름이\n조금 예상됩니다"
                     android:layout_centerHorizontal="true"
-                    android:textSize="10dp"
-                    android:textColor="#606367"
-                    android:text="최저기온 : "/>
-
-                <TextView
-                    android:id="@+id/min_temp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/min"
-                    android:layout_marginTop="30dp"
-                    android:textSize="10dp"
-                    android:textColor="#f3b255"
-                    android:text="30"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/min_temp"
-                    android:paddingBottom="4dp"
-                    android:layout_marginTop="30dp"
-                    android:textSize="10dp"
-                    android:textColor="#f3b255"
-                    android:text="º"/>
-
-                <TextView
-                    android:id="@+id/max"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/min"
-                    android:layout_centerHorizontal="true"
-                    android:textSize="10dp"
-                    android:textColor="#606367"
-                    android:text="최고기온 : "/>
-
-                <TextView
-                    android:id="@+id/max_temp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/max"
-                    android:layout_below="@id/min_temp"
-                    android:textSize="10dp"
-                    android:textColor="#f3b255"
-                    android:text="40"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/max_temp"
-                    android:layout_below="@id/min_temp"
-                    android:paddingBottom="4dp"
-                    android:layout_centerHorizontal="true"
-                    android:textSize="10dp"
-                    android:textColor="#f3b255"
-                    android:text="º"/>
-
-                <TextView
-                    android:id="@+id/pop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/max"
-                    android:layout_centerHorizontal="true"
-                    android:textSize="10dp"
-                    android:textColor="#606367"
-                    android:text="강수확률 : "/>
-
-                <TextView
-                    android:id="@+id/pop_data"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/pop"
-                    android:layout_below="@id/max_temp"
-                    android:textSize="10dp"
-                    android:textColor="#f3b255"
-                    android:text="70"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/pop_data"
-                    android:layout_below="@id/max_temp"
-                    android:paddingBottom="4dp"
-                    android:layout_centerHorizontal="true"
-                    android:textSize="10dp"
-                    android:textColor="#f3b255"
-                    android:text="%"/>
-
-                <TextView
-                    android:id="@+id/reh"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/pop"
-                    android:layout_centerHorizontal="true"
-                    android:textSize="10dp"
-                    android:textColor="#606367"
-                    android:text="습도 : "/>
-
-                <TextView
-                    android:id="@+id/reh_data"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/reh"
-                    android:layout_below="@id/pop_data"
-                    android:textSize="10dp"
-                    android:textColor="#f3b255"
-                    android:text="70"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/reh_data"
-                    android:layout_below="@id/pop_data"
-                    android:paddingBottom="4dp"
-                    android:layout_centerHorizontal="true"
-                    android:textSize="10dp"
-                    android:textColor="#f3b255"
-                    android:text="%"/>
-
-                <TextView
-                    android:id="@+id/finedust"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/reh"
-                    android:layout_centerHorizontal="true"
-                    android:textSize="10dp"
-                    android:textColor="#606367"
-                    android:text="미세먼지 : "/>
-
-                <TextView
-                    android:id="@+id/finedust_data"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/finedust"
-                    android:layout_below="@id/reh_data"
-                    android:textSize="10dp"
-                    android:textColor="#f3b255"
-                    android:text="70"/>
-
-            </RelativeLayout>
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true">
-
-                <View
-                    android:layout_width="320dp"
-                    android:layout_height="2dp"
-                    android:layout_centerHorizontal="true"
-                    android:background="#606367"
-                    />
-
-            </RelativeLayout>
-
+                    android:layout_below="@id/temp"
+                    android:layout_marginTop="15dp"
+                    app:font="custom1"
+                    android:gravity="center_horizontal"
+                    android:layout_marginLeft="5dp"
+                    android:textSize="15dp"
+                    android:textColor="#fff"/>
             </RelativeLayout>
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/graph"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:layout_marginRight="20px"
-        android:layout_marginLeft="20px"
-        android:layout_below="@id/weather"/>
+        <RelativeLayout
+            android:id="@+id/graph"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:visibility="gone"
+            android:layout_marginRight="20px"
+            android:layout_marginLeft="20px"
+            android:layout_below="@id/weather"/>
+
+        <LinearLayout
+            android:id="@+id/circularchart"
+            android:layout_below="@id/graph"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/finedust"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                />
+
+            <RelativeLayout
+                android:id="@+id/humidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                />
+
+            <RelativeLayout
+                android:id="@+id/precipitation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                />
+
+
+        </LinearLayout>
 
     </RelativeLayout>
 

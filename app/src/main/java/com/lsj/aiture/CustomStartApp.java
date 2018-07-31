@@ -11,6 +11,7 @@ public class CustomStartApp extends Application {
 
         Typekit.getInstance()
                 .addNormal(Typekit.createFromAsset(this, "NanumSquareR.otf"))
-                .addBold(Typekit.createFromAsset(this, "NanumSquareB.otf"));
+                .addBold(Typekit.createFromAsset(this, "NanumSquareB.otf"))
+                .addCustom1(Typekit.createFromAsset(this, "NanumSquareL.otf"));
     }
 }

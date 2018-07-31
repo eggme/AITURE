@@ -5,7 +5,7 @@ package com.lsj.aiture;
  */
 public class Graph {
     private String name = null;
-    private int color = 0xFf3b255;
+    private int color = 0xfff3b255;
     private int[] temp = null;
     private int[] time = null;
     private int bitmapResource = -1;

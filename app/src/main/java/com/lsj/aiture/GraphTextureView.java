@@ -92,7 +92,6 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
         int chartYLength;
         Paint p;
         Paint pCircle;
-        Paint miniCircle;
         Paint pMarkText;
         float anim;
         boolean isAnimation;
@@ -109,7 +108,6 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
             this.chartYLength = height - (GraphTextureView.this.graphVO.getPaddingBottom() + GraphTextureView.this.graphVO.getPaddingTop());
             this.p = new Paint();
             this.pCircle = new Paint();
-            this.miniCircle = new Paint();
             this.pMarkText = new Paint();
             this.anim = 0.0F;
             this.isAnimation = false;
@@ -131,11 +129,6 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
             this.animStartTime = System.currentTimeMillis();
             while (isRun) { // isRun Default true
                 if (!this.isDirty) { // isDirty Default true
-//                    try {
-//                        Thread.sleep(100L);
-//                    } catch (InterruptedException var13) {
-//                        var13.printStackTrace();
-//                    }
                 } else {
                     Surface surface = null;
                     SurfaceTexture surfaceTexture = mSurfaceTexture;
@@ -152,7 +145,6 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
                     synchronized (GraphTextureView.touchLock) {
                         try {
                             this.calcTimePass();
-                            //canvas.drawColor(bgcolor);
                             this.drawXText(graphCanvasWrapper);
                             this.drawTempText(graphCanvasWrapper);
                             this.drawGraph(graphCanvasWrapper);
@@ -165,13 +157,6 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
                             }
                         }
                     }
-//                    try {
-//                        Thread.sleep(0L);
-//                    } catch (InterruptedException var14) {
-//                        var14.printStackTrace();
-//                    }
-
-
                     surface.release();
                 }
             }
@@ -183,7 +168,7 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
             this.p.setAntiAlias(true);
             this.p.setFilterBitmap(true);
             this.p.setColor(0xFFFFFF);
-            this.p.setStrokeWidth(5.0F);
+            this.p.setStrokeWidth(2.0F);
             this.p.setStyle(Paint.Style.STROKE);
             this.p.setAlpha(0x00);
             this.pCircle = new Paint();
@@ -191,15 +176,8 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
             this.pCircle.setAntiAlias(true);
             this.pCircle.setFilterBitmap(true);
             this.pCircle.setColor(Color.WHITE);
-            this.pCircle.setStrokeWidth(3.0F);
-            this.pCircle.setStyle(Paint.Style.STROKE);
-            this.miniCircle = new Paint();
-            this.miniCircle.setFlags(2);
-            this.miniCircle.setAntiAlias(true);
-            this.miniCircle.setFilterBitmap(true);
-            this.miniCircle.setColor(Color.WHITE);
-            this.miniCircle.setStrokeWidth(6.0F);
-            this.miniCircle.setStyle(Paint.Style.FILL);
+            this.pCircle.setStrokeWidth(2.0F);
+            this.pCircle.setStyle(Paint.Style.FILL);
             this.pMarkText = new Paint();
             this.pMarkText.setFlags(1);
             this.pMarkText.setAntiAlias(true);
@@ -274,10 +252,8 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
                             y = (float) (this.yLength / 2) + (( GraphTextureView.this.graphVO.getGraph().getTemp()[j] - avg ) * GraphTextureView.this.graphVO.INCREMENT) + 30;
                             linePath.lineTo(x, y);
                         }
-                        //this.pCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
-                        this.miniCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
-                        graphCanvas.drawCircle(x, y, 15.0F, this.pCircle); // miniCircle
-                        graphCanvas.drawCircle(x, y, 10.0F, this.miniCircle);
+                        this.pCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
+                        graphCanvas.drawCircle(x, y, 6.0F, this.pCircle);
                     }
                 }
 
@@ -328,8 +304,8 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
                             }
                         }
 
-                        this.miniCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
-                        graphCanvas.drawCircle(x, y, 10.0F, this.miniCircle);
+                        this.pCircle.setColor(GraphTextureView.this.graphVO.getGraph().getColor());
+                        graphCanvas.drawCircle(x, y, 6.0F, this.pCircle);
                         prev_x = x;
                         prev_y = y;
                     }

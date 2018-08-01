@@ -119,7 +119,6 @@ public class GPSController extends Service implements LocationListener {
         }
         return latitude;
     }
-
     public double getLongtitude(){
         if(location != null){
             longtitude = location.getLongitude();

@@ -65,13 +65,6 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         temp = (TextView)findViewById(R.id.temp);
         weather_kor = (TextView)findViewById(R.id.weather_kor);
 
-        circularOutlineGraph = new CircularOutlineGraph(getApplicationContext());
-        finedust.addView(circularOutlineGraph);
-        circularOutlineGraph = new CircularOutlineGraph(getApplicationContext());
-        humidity.addView(circularOutlineGraph);
-        circularOutlineGraph = new CircularOutlineGraph(getApplicationContext());
-        precipitation.addView(circularOutlineGraph);
-
         startSystem();
     }
 
@@ -152,14 +145,23 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
                 }
             }
         });
-        /*
         int index = findGu(guName);
         if(index <= 0){
             index = 0;
         }
         FinedustDistinction finedustDistinction = new FinedustDistinction(Integer.parseInt(finedustList.get(index).getPm10Value()));
-        finedust_data.setText(finedustDistinction.getFinedust());
-        */
+
+        float finedustValue = Float.parseFloat(finedustList.get(index).getPm10Value());
+        circularOutlineGraph = new CircularOutlineGraph(getApplicationContext()  ,finedustDistinction.MAX, finedustValue , finedustValue+"" , "미세먼지");
+        finedust.addView(circularOutlineGraph);
+
+        float humidityValue = Float.parseFloat(weatherList.get(0).getREH());
+        circularOutlineGraph = new CircularOutlineGraph(getApplicationContext(), 100, humidityValue , humidityValue+"" , "습도");
+        humidity.addView(circularOutlineGraph);
+
+        float precipitationValue = Float.parseFloat(weatherList.get(0).getPop());
+        circularOutlineGraph = new CircularOutlineGraph(getApplicationContext() , 100, precipitationValue, precipitationValue+"" , "강수확률");
+        precipitation.addView(circularOutlineGraph);
     }
 
     private int findGu(String guName) {

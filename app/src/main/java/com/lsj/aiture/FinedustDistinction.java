@@ -3,6 +3,7 @@ package com.lsj.aiture;
 public class FinedustDistinction {
 
     private int pm10Value;
+    public final float MAX = 200f;
 
     public FinedustDistinction(int pm10Value){
         this.pm10Value = pm10Value;

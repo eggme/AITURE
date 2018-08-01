@@ -100,6 +100,8 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
         Bitmap bg;
         Canvas canvas;
         Context mCtx;
+        private final String FONTPATH = "NanumSquareL.otf";
+        private Typeface mTypeface;
 
         public DrawThread() {
             this.xLength = width - (GraphTextureView.this.graphVO.getPaddingLeft() + GraphTextureView.this.graphVO.getPaddingRight() + GraphTextureView.this.graphVO.getMarginRight());
@@ -163,6 +165,7 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
         }
 
         private void setPaint() {
+            mTypeface = Typeface.createFromAsset(context.getAssets() , FONTPATH);
             this.p = new Paint();
             this.p.setFlags(1);
             this.p.setAntiAlias(true);
@@ -181,8 +184,8 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
             this.pMarkText = new Paint();
             this.pMarkText.setFlags(1);
             this.pMarkText.setAntiAlias(true);
-            this.pMarkText.setColor(Color.WHITE);
-            this.pMarkText.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+            this.pMarkText.setColor(0xFFFFFFFF);
+            this.pMarkText.setTypeface(mTypeface);
         }
 
 
@@ -327,7 +330,7 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
                 x = xGap * (float) i;
                 String text = (GraphTextureView.this.graphVO.getGraph().getTime()[i])+"시";
                 this.pMarkText.measureText(text);
-                this.pMarkText.setTextSize(30.0F);
+                this.pMarkText.setTextSize(25.0F);
                 Rect rect = new Rect();
                 this.pMarkText.getTextBounds(text, 0, text.length(), rect);
                 graphCanvas.drawText(text, x - (float) (rect.width() / 2), yGap, this.pMarkText);
@@ -346,7 +349,7 @@ public class GraphTextureView extends TextureView implements TextureView.Surface
                 y = (float) (this.yLength / 2) + (( GraphTextureView.this.graphVO.getGraph().getTemp()[i] - avg ) * GraphTextureView.this.graphVO.INCREMENT) + 60;
                 String text = (GraphTextureView.this.graphVO.getGraph().getTemp()[i])+"º";
                 this.pMarkText.measureText(text);
-                this.pMarkText.setTextSize(25.0F);
+                this.pMarkText.setTextSize(15.0F);
                 Rect rect = new Rect();
                 this.pMarkText.getTextBounds(text, 0, text.length(), rect);
                 graphCanvas.drawText(text, x - (float) (rect.width() / 2), y, this.pMarkText);

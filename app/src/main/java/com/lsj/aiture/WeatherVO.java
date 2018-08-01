@@ -6,16 +6,16 @@ package com.lsj.aiture;
 
 public class WeatherVO {
 
-    private String LATITUDE;
-    private String LONGITUDE;
-    private String HOUR;
-    private String TIME;
-    private String TEMP;
-    private String pop;
-    private String TMX;
-    private String TMN;
-    private String WKKOR;
-    private String REH;
+    private String LATITUDE; // 위도
+    private String LONGITUDE;  // 경도
+    private String HOUR;  // 기준 시간
+    private String TIME;  // 가져온 시간
+    private String TEMP;  // 온도
+    private String pop;  // 강수확률
+    private String TMX;  // 최고온도
+    private String TMN;  // 최저온도
+    private String WKKOR;  // 날씨 한글데이터
+    private String REH;  // 습도
 
     public String getPop() {
         return pop;

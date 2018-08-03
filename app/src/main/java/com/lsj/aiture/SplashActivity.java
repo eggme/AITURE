@@ -16,14 +16,6 @@ import com.tsengvn.typekit.TypekitContextWrapper;
 public class SplashActivity extends AppCompatActivity implements NoActionBar{
 
     private ImageView img;
-    private BluetoothService btService;
-    private final int REQUEST_ENABLE_BLUETOOTH = 1;
-    private Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-        }
-    };
 
 
     @Override
@@ -51,9 +43,6 @@ public class SplashActivity extends AppCompatActivity implements NoActionBar{
 
     private void initialized(){
         img = (ImageView)findViewById(R.id.register);
-        if(btService == null){
-            btService = new BluetoothService(this, handler);
-        }
     }
 
     private void Click(){
@@ -67,17 +56,6 @@ public class SplashActivity extends AppCompatActivity implements NoActionBar{
 
             }
         });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case REQUEST_ENABLE_BLUETOOTH :
-                if(resultCode == Activity.RESULT_OK){
-                }
-                break;
-        }
     }
 
     // 폰트

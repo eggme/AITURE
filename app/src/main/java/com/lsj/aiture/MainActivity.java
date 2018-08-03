@@ -1,17 +1,23 @@
 package com.lsj.aiture;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tsengvn.typekit.TypekitContextWrapper;
 
@@ -21,6 +27,8 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
 
     private WeatherParser weatherParser = null;
     private FinedustParser finedustParser = null;
+    private BluetoothService btService;
+    private final int REQUEST_ENABLE_BLUETOOTH = 1;
 
     private RelativeLayout wrapper;
     private RelativeLayout graph;
@@ -28,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     private RelativeLayout finedust;
     private RelativeLayout humidity;
     private RelativeLayout precipitation;
+    private ImageView setting;
     private TextView temp;
     private TextView weather_kor;
     private CircularOutlineGraph circularOutlineGraph;
@@ -64,9 +73,41 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         precipitation = (RelativeLayout)findViewById(R.id.precipitation);
         temp = (TextView)findViewById(R.id.temp);
         weather_kor = (TextView)findViewById(R.id.weather_kor);
+        setting = (ImageView)findViewById(R.id.setting);
+        btService = new BluetoothService(MainActivity.this);
+        setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu p = new PopupMenu(getApplicationContext(), v);
+                getMenuInflater().inflate(R.menu.main_menu, p.getMenu());
+                p.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        btService.checkBluetooth();
+                        return false;
+                    }
+                });
+                p.show();
+            }
+        });
 
         startSystem();
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case REQUEST_ENABLE_BLUETOOTH :
+                if(resultCode == Activity.RESULT_OK){
+                }else{
+                    Toast.makeText(getApplicationContext(), "블루투스를 지원해 주세요.", Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
+    }
+
 
     private void startSystem(){
         weather = new Weather();

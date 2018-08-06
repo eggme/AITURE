@@ -27,15 +27,9 @@ public class BluetoothService {
     private ConnectedThread connectedThread;
     private int state;
 
-    // 상태
-    public static final int STATE_NONE = 0;
-    public static final int STATE_LISTEN = 1;
-    public static final int STATE_CONNECTING = 2;
-    public static final int STATE_CONNECTED = 3;
-
 
     public BluetoothService(BluetoothAdapter adapter, Handler handler){
-        state = STATE_NONE;
+        state = BluetoothState.STATE_NONE;
         this.adapter = adapter;
         this.handler = handler;
     }
@@ -60,19 +54,19 @@ public class BluetoothService {
             accpetThread = new AcceptThread();
             accpetThread.start();
         }
-        setState(STATE_LISTEN);
+        setState(BluetoothState.STATE_LISTEN);
     }
 
     // 블루투스 연결
     public synchronized void connect(BluetoothDevice device){
-        if(state == STATE_CONNECTING){
+        if(state == BluetoothState.STATE_CONNECTING){
             if(connectThread != null){connectThread.cancle();connectThread = null;}
         }
         if(connectedThread != null){connectedThread.cancle();connectedThread = null;}
 
         connectThread = new ConnectThread(device);
         connectThread.start();
-        setState(STATE_CONNECTED);
+        setState(BluetoothState.STATE_CONNECTED);
     }
 
     public synchronized void connected(BluetoothSocket socket, BluetoothDevice device){
@@ -84,7 +78,7 @@ public class BluetoothService {
         connectedThread = new ConnectedThread(socket);
         connectedThread.start();
 
-        setState(STATE_CONNECTED);
+        setState(BluetoothState.STATE_CONNECTED);
     }
 
     public synchronized void stop(){
@@ -92,24 +86,24 @@ public class BluetoothService {
         if(connectedThread != null){connectedThread.cancle();connectedThread = null;}
         if(accpetThread != null){accpetThread.cancle();accpetThread = null;}
 
-        setState(STATE_NONE);
+        setState(BluetoothState.STATE_NONE);
     }
 
     public void write(byte[] out){
         ConnectedThread r;
         synchronized (this){
-            if(state != STATE_CONNECTED) return;
+            if(state != BluetoothState.STATE_CONNECTED) return;
             r= connectedThread;
         }
         r.write(out);
     }
 
     private void connectionLost(){
-        setState(STATE_LISTEN);
+        setState(BluetoothState.STATE_LISTEN);
     }
 
     private void connectionFailed(){
-        setState(STATE_LISTEN);
+        setState(BluetoothState.STATE_LISTEN);
     }
 
 

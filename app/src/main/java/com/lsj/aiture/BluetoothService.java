@@ -1,157 +1,235 @@
 package com.lsj.aiture;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 public class BluetoothService {
 
-    private final String TAG = "BluetoothService";
-    public final int BLUETOOTHSERVICE_CONNECTING = 1;
-    private final int REQUEST_ENABLE_BLUETOOTH = 1;
-    private Set<BluetoothDevice> mDevices = null;
-    private int mPairedDeviceCount;
-    private BluetoothAdapter btAdapter;
-    private BluetoothDevice mRemoteDevice;
-    private Activity activity;
-    private BluetoothSocket mSocket;
-    private InputStream mInputStream;
-    private OutputStream mOutputStream;
-    private Thread mWorkerThread;
-    private int bytes;
+    private static final String TAG = "BluetoothSerivce";
+    private static final UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
+
+    private BluetoothAdapter adapter;
     private Handler handler;
+    // 연결대기 스레드
+    private AcceptThread accpetThread;
+    // 연결 스레드
+    private ConnectThread connectThread;
+    // 연결중 스레드
+    private ConnectedThread connectedThread;
+    private int state;
+
+    // 상태
+    public static final int STATE_NONE = 0;
+    public static final int STATE_LISTEN = 1;
+    public static final int STATE_CONNECTING = 2;
+    public static final int STATE_CONNECTED = 3;
 
 
-    public BluetoothService(Activity activity , BluetoothAdapter btAdapter , Handler handler){
-        this.activity = activity;
-        this.btAdapter = btAdapter;
+    public BluetoothService(BluetoothAdapter adapter, Handler handler){
+        state = STATE_NONE;
+        this.adapter = adapter;
         this.handler = handler;
     }
 
-    public void checkBluetooth(){
-        if(btAdapter == null){
-            Toast.makeText(activity, "블루투스를 지원하지 않습니다.", Toast.LENGTH_LONG).show();
-        }else{
-            if(btAdapter.isEnabled()){
-                Intent in = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                activity.startActivityForResult(in, REQUEST_ENABLE_BLUETOOTH);
-            }else{
-                findDevice();
-            }
-        }
+    // 상태 설정
+    private synchronized void setState(int state){
+        this.state = state;
     }
 
-    public void findDevice(){
+    //상태값 리턴
+    public synchronized int getState(){
+        return state;
+    }
 
-        mDevices = btAdapter.getBondedDevices();
-        mPairedDeviceCount = mDevices.size();
+    // 전송 시작
+    public synchronized void start(){
+        if(connectedThread != null){
+            connectedThread = null;
+        }
 
-        if(mPairedDeviceCount != 0){
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setTitle("블루투스 장치 선택");
+        if(accpetThread == null){
+            accpetThread = new AcceptThread();
+            accpetThread.start();
+        }
+        setState(STATE_LISTEN);
+    }
 
-            List<String> listitems = new ArrayList<>();
-            for(BluetoothDevice device : mDevices){
-                listitems.add(device.getName());
-            }
-            listitems.add("취소");
+    // 블루투스 연결
+    public synchronized void connect(BluetoothDevice device){
+        if(state == STATE_CONNECTING){
+            if(connectThread != null){connectThread.cancle();connectThread = null;}
+        }
+        if(connectedThread != null){connectedThread.cancle();connectedThread = null;}
 
-            final CharSequence[] items = listitems.toArray(new CharSequence[listitems.size()]);
+        connectThread = new ConnectThread(device);
+        connectThread.start();
+        setState(STATE_CONNECTED);
+    }
 
-            builder.setItems(items, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if(which == mPairedDeviceCount){
-                        return;
-                    }else{
-                        connectToSelectedDevices(items[which].toString());
-                    }
+    public synchronized void connected(BluetoothSocket socket, BluetoothDevice device){
+
+        if(connectThread != null){connectThread.cancle();connectThread = null;}
+        if(connectedThread != null){connectedThread.cancle();connectedThread = null;}
+        if(accpetThread != null){accpetThread.cancle();accpetThread = null;}
+
+        connectedThread = new ConnectedThread(socket);
+        connectedThread.start();
+
+        setState(STATE_CONNECTED);
+    }
+
+    public synchronized void stop(){
+        if(connectThread != null){connectThread.cancle();connectThread = null;}
+        if(connectedThread != null){connectedThread.cancle();connectedThread = null;}
+        if(accpetThread != null){accpetThread.cancle();accpetThread = null;}
+
+        setState(STATE_NONE);
+    }
+
+    public void write(byte[] out){
+        ConnectedThread r;
+        synchronized (this){
+            if(state != STATE_CONNECTED) return;
+            r= connectedThread;
+        }
+        r.write(out);
+    }
+
+    private void connectionLost(){
+        setState(STATE_LISTEN);
+    }
+
+    private void connectionFailed(){
+        setState(STATE_LISTEN);
+    }
+
+
+    private class AcceptThread extends Thread{
+
+        private BluetoothServerSocket serverSocket;
+
+        public AcceptThread(){
+        }
+
+        @Override
+        public void run() {
+            BluetoothSocket socket;
+            try{
+                serverSocket = adapter.listenUsingInsecureRfcommWithServiceRecord(TAG,MY_UUID);
+                socket = serverSocket.accept();
+                if(socket != null){
+                    connected(socket, socket.getRemoteDevice());
                 }
-            });
-
-            builder.setCancelable(false);
-            AlertDialog alert = builder.create();
-            alert.show();
-
-        }else{
-            Toast.makeText(activity, "페어링된 장치가 없습니다.", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public BluetoothDevice getDeviceFromDondedList(String deviceName){
-        BluetoothDevice selectedDevice = null;
-        for(BluetoothDevice device : mDevices){
-            if(deviceName.equals(device.getName())){
-                selectedDevice = device;
+            }catch (IOException e){
+                Log.i(TAG, "listen 실패");
             }
         }
-        return selectedDevice;
-    }
 
-    public void connectToSelectedDevices(String deviceName){
-        mRemoteDevice = getDeviceFromDondedList(deviceName);
-        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-        Log.i(TAG, "ㅎㅇㅎㅇ");
-        try{
-            Log.i(TAG, "ㅎㅇㅎㅇ");
-            mSocket = mRemoteDevice.createInsecureRfcommSocketToServiceRecord(uuid);
-            Log.i(TAG, mSocket.isConnected()+"");
-            mSocket.connect();
-            Log.i(TAG, "ㅎㅇㅎㅇ");
-            mOutputStream = mSocket.getOutputStream();
-            mInputStream = mSocket.getInputStream();
-            Log.i(TAG, "ㅎㅇㅎㅇ");
-            sendData("aaa");
-        }catch (IOException e){
-            Toast.makeText(activity.getApplicationContext(), "IO Exception 발생", Toast.LENGTH_LONG).show();
-            Log.i(TAG, e.getMessage());
-            e.printStackTrace();
+        public void cancle(){
+            try{
+                serverSocket.close();
+            }catch (IOException e){Log.i(TAG, "AcceptThread close 에러");}
         }
     }
 
-    public void sendData(String data){
-        try{
-            mOutputStream.write(data.getBytes());
-        }catch (Exception e){}
+    private class ConnectThread extends Thread{
+
+        private BluetoothDevice device;
+        private BluetoothSocket socket;
+
+        private ConnectThread(BluetoothDevice device){
+            this.device = device;
+            BluetoothSocket tmp = null;
+
+            try{
+                tmp = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
+            }catch (IOException e){Log.i(TAG, "ConnectThread create 에러");}
+            socket = tmp;
+        }
+
+        @Override
+        public void run() {
+            adapter.cancelDiscovery();
+
+            try{
+                socket.connect();
+            }catch (IOException e){
+                connectionFailed();
+                try{
+                    socket.close();
+                }catch (IOException e1){Log.i(TAG, "ConnectThread connection failure 에러");}
+
+                BluetoothService.this.start();
+                return;
+            }
+
+            synchronized (BluetoothService.this){
+                connectThread = null;
+            }
+
+            connected(socket, device);
+        }
+
+        public void cancle(){
+            try{
+                socket.close();
+            }catch (IOException e){Log.i(TAG, "ConnectThread close 에러입니다");}
+        }
     }
 
-    String datas;
-    private void beginListenForData() {
-        mWorkerThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                    try{
-                        while ((bytes = mInputStream.read()) != -1){
-                            datas += bytes;
-                        }
-                        Message msg = new Message();
-                        Bundle b = new Bundle();
-                        b.putString("result", datas);
-                        msg.setData(b);
-                        handler.sendMessage(msg);
-                    }catch (IOException e){}
+    private class ConnectedThread extends Thread{
+
+        private BluetoothSocket socket;
+        private InputStream inputStream;
+        private OutputStream outputStream;
+
+        private ConnectedThread(BluetoothSocket socket){
+            this.socket = socket;
+            try{
+                inputStream = socket.getInputStream();
+                outputStream = socket.getOutputStream();
+            }catch (IOException e){Log.i(TAG, "ConnectedThread socket not created 에러");}
+        }
+
+        @Override
+        public void run() {
+            byte[] buffer = new byte[1024];
+            int bytes;
+
+            while (true){
+                try{
+                    bytes = inputStream.read(buffer);
+
+                    handler.obtainMessage(BluetoothState.BLUETOOTH_MESSAGE_READ ,bytes, -1, buffer).sendToTarget();
+                }catch (IOException e){
+                    Log.i(TAG, "disconnected 에러");
+                    connectionLost();
+                    break;
                 }
-        });
-        mWorkerThread.start();
+            }
+        }
+
+        public void cancle(){
+            try{
+                socket.close();
+            }catch (IOException e){Log.i(TAG, "ConnectedThread cancle 에러");}
+        }
+
+        public void write(byte[] buffer){
+            try{
+                outputStream.write(buffer);
+                handler.obtainMessage(BluetoothState.BLUETOOTH_MESSAGE_WRITE, -1, -1, buffer);
+            }catch (IOException e){Log.i(TAG,"write Error 에러");}
+        }
     }
+
 }

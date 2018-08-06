@@ -87,25 +87,8 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         precipitation = (RelativeLayout)findViewById(R.id.precipitation);
         temp = (TextView)findViewById(R.id.temp);
         weather_kor = (TextView)findViewById(R.id.weather_kor);
-        setting = (ImageView)findViewById(R.id.setting);
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        btService = new BluetoothService(MainActivity.this, bluetoothAdapter ,handler);
-        setting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu p = new PopupMenu(getApplicationContext(), v);
-                getMenuInflater().inflate(R.menu.main_menu, p.getMenu());
-                p.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        btService.checkBluetooth();
-                        return false;
-                    }
-                });
-                p.show();
-            }
-        });
-
+        btService = new BluetoothService(bluetoothAdapter ,handler);
         startSystem();
     }
 
@@ -116,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         switch (requestCode){
             case REQUEST_ENABLE_BLUETOOTH :
                 if(resultCode == Activity.RESULT_OK){
-                    btService.findDevice();
+
                 }else{
                     Toast.makeText(getApplicationContext(), "블루투스를 지원해 주세요.", Toast.LENGTH_LONG).show();
                 }

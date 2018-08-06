@@ -182,7 +182,7 @@ public class BluetoothService {
         public void cancle(){
             try{
                 socket.close();
-            }catch (IOException e){Log.i(TAG, "ConnectThread close 에러");}
+            }catch (IOException e){Log.i(TAG, "ConnectThread close 에러입니다");}
         }
     }
 

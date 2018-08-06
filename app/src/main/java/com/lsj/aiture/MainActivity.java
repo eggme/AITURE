@@ -1,17 +1,26 @@
 package com.lsj.aiture;
 
 import android.Manifest;
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tsengvn.typekit.TypekitContextWrapper;
 
@@ -21,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
 
     private WeatherParser weatherParser = null;
     private FinedustParser finedustParser = null;
+    private BluetoothService btService;
+    private final int REQUEST_ENABLE_BLUETOOTH = 1;
 
     private RelativeLayout wrapper;
     private RelativeLayout graph;
@@ -28,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     private RelativeLayout finedust;
     private RelativeLayout humidity;
     private RelativeLayout precipitation;
+    private ImageView setting;
     private TextView temp;
     private TextView weather_kor;
     private CircularOutlineGraph circularOutlineGraph;
@@ -45,6 +57,17 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     private boolean isPermission = false;
     private boolean isAccessFineLocation = false;
     private boolean isAccessCoarseLocation = false;
+
+    private BluetoothAdapter bluetoothAdapter;
+    private Handler handler = new Handler(){
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            String result = msg.getData().getString("result");
+            Toast.makeText(getApplicationContext(), result , Toast.LENGTH_LONG).show();
+        }
+    };
 
     @Override
     protected void onStart() {
@@ -64,9 +87,43 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         precipitation = (RelativeLayout)findViewById(R.id.precipitation);
         temp = (TextView)findViewById(R.id.temp);
         weather_kor = (TextView)findViewById(R.id.weather_kor);
+        setting = (ImageView)findViewById(R.id.setting);
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        btService = new BluetoothService(MainActivity.this, bluetoothAdapter ,handler);
+        setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu p = new PopupMenu(getApplicationContext(), v);
+                getMenuInflater().inflate(R.menu.main_menu, p.getMenu());
+                p.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        btService.checkBluetooth();
+                        return false;
+                    }
+                });
+                p.show();
+            }
+        });
 
         startSystem();
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case REQUEST_ENABLE_BLUETOOTH :
+                if(resultCode == Activity.RESULT_OK){
+                    btService.findDevice();
+                }else{
+                    Toast.makeText(getApplicationContext(), "블루투스를 지원해 주세요.", Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
+    }
+
 
     private void startSystem(){
         weather = new Weather();
@@ -207,15 +264,11 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
                                            int[] grantResults) {
         if (requestCode == PERMISSIONS_ACCESS_FINE_LOCATION
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
             isAccessFineLocation = true;
-
         } else if (requestCode == PERMISSIONS_ACCESS_COARSE_LOCATION
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-
             isAccessCoarseLocation = true;
         }
-
         if (isAccessFineLocation && isAccessCoarseLocation) {
             isPermission = true;
         }

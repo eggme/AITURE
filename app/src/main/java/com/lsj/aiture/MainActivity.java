@@ -3,6 +3,7 @@ package com.lsj.aiture;
 import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -30,8 +31,6 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
 
     private WeatherParser weatherParser = null;
     private FinedustParser finedustParser = null;
-    private BluetoothService btService;
-    private final int REQUEST_ENABLE_BLUETOOTH = 1;
 
     private RelativeLayout wrapper;
     private RelativeLayout graph;
@@ -58,14 +57,38 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     private boolean isAccessFineLocation = false;
     private boolean isAccessCoarseLocation = false;
 
-    private BluetoothAdapter bluetoothAdapter;
+    private BluetoothAdapter adapter;
+    private BluetoothService service;
     private Handler handler = new Handler(){
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            String result = msg.getData().getString("result");
-            Toast.makeText(getApplicationContext(), result , Toast.LENGTH_LONG).show();
+            switch (msg.what){
+                case BluetoothState.BLUETOOTH_MESSAGE_CHANGE :
+                    switch (msg.arg1){
+                        case BluetoothState.STATE_CONNECTED :
+                            Toast.makeText(getApplicationContext(), "연결 성공", Toast.LENGTH_SHORT).show();
+                            break;
+                        case BluetoothState.STATE_CONNECTING :
+                            Log.i("MainHandler", "Connecting");
+                            break;
+                        case BluetoothState.STATE_NONE :
+                            Log.i("MainHandler", "None");
+                            break;
+                    }
+                    break;
+                case BluetoothState.BLUETOOTH_MESSAGE_READ :
+                    // 메세지 읽을 때
+                    byte[] readBuf = (byte[]) msg.obj;
+                    String readMsg = new String(readBuf, 0 , msg.arg1);
+                    Toast.makeText(getApplicationContext(), readMsg, Toast.LENGTH_LONG).show();
+                    break;
+                case BluetoothState.BLUETOOTH_MESSAGE_DEVICE_NAME :
+                    String deviceName = msg.getData().getString(BluetoothState.DEVICE_NAME);
+                    Toast.makeText(getApplicationContext(), deviceName, Toast.LENGTH_LONG).show();
+                    break;
+            }
         }
     };
 
@@ -73,12 +96,25 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     protected void onStart() {
         super.onStart();
         HideActionbar();
+        if(!adapter.isEnabled()){
+            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(intent, BluetoothState.REQUEST_ENABLE_BT);
+        }else{
+            setUpBT();
+        }
+    }
+
+    private void setUpBT(){
+        service = new BluetoothService(adapter, handler);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        adapter = BluetoothAdapter.getDefaultAdapter();
+
         graph = (RelativeLayout)findViewById(R.id.graph);
         wrapper = (RelativeLayout)findViewById(R.id.wrapper);
         circularchart = (LinearLayout) findViewById(R.id.circularchart);
@@ -87,8 +123,6 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         precipitation = (RelativeLayout)findViewById(R.id.precipitation);
         temp = (TextView)findViewById(R.id.temp);
         weather_kor = (TextView)findViewById(R.id.weather_kor);
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        btService = new BluetoothService(bluetoothAdapter ,handler);
         startSystem();
     }
 
@@ -97,14 +131,20 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
-            case REQUEST_ENABLE_BLUETOOTH :
+            case BluetoothState.REQUEST_CONNECT_DEVICE :
                 if(resultCode == Activity.RESULT_OK){
-
-                }else{
-                    Toast.makeText(getApplicationContext(), "블루투스를 지원해 주세요.", Toast.LENGTH_LONG).show();
+                    String address = data.getExtras().getString(BluetoothState.EXTRA_DEVICE_ADDRESS);
+                    BluetoothDevice device = adapter.getRemoteDevice(address);
+                    service.connect(device);
+                }
+                break;
+            case BluetoothState.REQUEST_ENABLE_BT :
+                if(resultCode == Activity.RESULT_OK){
+                    setUpBT();
                 }
                 break;
         }
+
     }
 
 
@@ -125,9 +165,14 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     }
 
     @Override
-    protected void onResume() {
+    protected synchronized void onResume() {
         super.onResume();
         startSystem();
+        if(service != null){
+            if(service.getState() == BluetoothState.STATE_NONE){
+                service.start();
+            }
+        }
     }
 
     @Override

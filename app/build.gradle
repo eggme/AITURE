@@ -20,9 +20,9 @@ android {
 }
 
 dependencies {
-    implementation  fileTree(include: ['*.jar'], dir: 'libs')
-    implementation  'com.android.support:support-v4:23.0.0'
-    implementation  'com.android.support:appcompat-v7:23.0.0'
-    implementation  'com.tsengvn:Typekit:1.0.0'
-    implementation  'com.android.support.constraint:constraint-layout:1.1.2'
+    compile  fileTree(include: ['*.jar'], dir: 'libs')
+    compile  'com.android.support:support-v4:23.0.0'
+    compile  'com.android.support:appcompat-v7:23.0.0'
+    compile  'com.tsengvn:Typekit:1.0.0'
+    compile  'com.android.support.constraint:constraint-layout:1.1.2'
 }

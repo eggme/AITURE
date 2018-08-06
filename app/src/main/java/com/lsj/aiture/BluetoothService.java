@@ -27,6 +27,7 @@ import java.util.UUID;
 public class BluetoothService {
 
     private final String TAG = "BluetoothService";
+    public final int BLUETOOTHSERVICE_CONNECTING = 1;
     private final int REQUEST_ENABLE_BLUETOOTH = 1;
     private Set<BluetoothDevice> mDevices = null;
     private int mPairedDeviceCount;
@@ -36,11 +37,10 @@ public class BluetoothService {
     private BluetoothSocket mSocket;
     private InputStream mInputStream;
     private OutputStream mOutputStream;
-    private byte[] readBuffer;
-    private int readBufferPosition;
     private Thread mWorkerThread;
     private int bytes;
     private Handler handler;
+
 
     public BluetoothService(Activity activity , BluetoothAdapter btAdapter , Handler handler){
         this.activity = activity;
@@ -111,17 +111,21 @@ public class BluetoothService {
     public void connectToSelectedDevices(String deviceName){
         mRemoteDevice = getDeviceFromDondedList(deviceName);
         UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
+        Log.i(TAG, "ㅎㅇㅎㅇ");
         try{
-            mSocket = mRemoteDevice.createRfcommSocketToServiceRecord(uuid);
+            Log.i(TAG, "ㅎㅇㅎㅇ");
+            mSocket = mRemoteDevice.createInsecureRfcommSocketToServiceRecord(uuid);
+            Log.i(TAG, mSocket.isConnected()+"");
             mSocket.connect();
-
+            Log.i(TAG, "ㅎㅇㅎㅇ");
             mOutputStream = mSocket.getOutputStream();
             mInputStream = mSocket.getInputStream();
-
-            beginListenForData();
+            Log.i(TAG, "ㅎㅇㅎㅇ");
+            sendData("aaa");
         }catch (IOException e){
             Toast.makeText(activity.getApplicationContext(), "IO Exception 발생", Toast.LENGTH_LONG).show();
+            Log.i(TAG, e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -133,8 +137,6 @@ public class BluetoothService {
 
     String datas;
     private void beginListenForData() {
-        readBuffer = new byte[1024];
-        readBufferPosition = 0;
         mWorkerThread = new Thread(new Runnable() {
             @Override
             public void run() {

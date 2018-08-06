@@ -2,10 +2,13 @@ package com.lsj.aiture;
 
 import android.Manifest;
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -55,6 +58,17 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     private boolean isAccessFineLocation = false;
     private boolean isAccessCoarseLocation = false;
 
+    private BluetoothAdapter bluetoothAdapter;
+    private Handler handler = new Handler(){
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            String result = msg.getData().getString("result");
+            Toast.makeText(getApplicationContext(), result , Toast.LENGTH_LONG).show();
+        }
+    };
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -74,7 +88,8 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         temp = (TextView)findViewById(R.id.temp);
         weather_kor = (TextView)findViewById(R.id.weather_kor);
         setting = (ImageView)findViewById(R.id.setting);
-        btService = new BluetoothService(MainActivity.this);
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        btService = new BluetoothService(MainActivity.this, bluetoothAdapter ,handler);
         setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         switch (requestCode){
             case REQUEST_ENABLE_BLUETOOTH :
                 if(resultCode == Activity.RESULT_OK){
+                    btService.findDevice();
                 }else{
                     Toast.makeText(getApplicationContext(), "블루투스를 지원해 주세요.", Toast.LENGTH_LONG).show();
                 }
@@ -248,15 +264,11 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
                                            int[] grantResults) {
         if (requestCode == PERMISSIONS_ACCESS_FINE_LOCATION
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
             isAccessFineLocation = true;
-
         } else if (requestCode == PERMISSIONS_ACCESS_COARSE_LOCATION
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-
             isAccessCoarseLocation = true;
         }
-
         if (isAccessFineLocation && isAccessCoarseLocation) {
             isPermission = true;
         }

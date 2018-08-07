@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.tsengvn.typekit.TypekitContextWrapper;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NoActionBar{
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            Log.i("asdasd", "message!!");
             switch (msg.what){
                 case BluetoothState.BLUETOOTH_MESSAGE_CHANGE :
                     switch (msg.arg1){
@@ -71,19 +73,44 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
                             Toast.makeText(getApplicationContext(), "연결 성공", Toast.LENGTH_SHORT).show();
                             break;
                         case BluetoothState.STATE_CONNECTING :
-                            Log.i("MainHandler", "Connecting");
+                            Log.i("asdasd", "Connecting");
                             break;
                         case BluetoothState.STATE_NONE :
-                            Log.i("MainHandler", "None");
+                            Log.i("asdasd", "None");
                             break;
                     }
+                    break;
+                case BluetoothState.EXTRA_DEVICE_NUMBER :
+                    Message message = (Message) msg.obj;
+                    Bundle bundle = message.getData();
+                    String address = bundle.getString(BluetoothState.EXTRA_DEVICE_ADDRESS);
+                    Toast.makeText(getApplicationContext(), "페어링된 디바이스 : "+ address, Toast.LENGTH_LONG).show();
+                    BluetoothDevice device = adapter.getRemoteDevice(address);
+                    service.connect(device);
                     break;
                 case BluetoothState.BLUETOOTH_MESSAGE_READ :
                     // 메세지 읽을 때
                     byte[] readBuf = (byte[]) msg.obj;
                     String readMsg = new String(readBuf, 0 , msg.arg1);
+                    Log.i("asdasd", readMsg);
                     Toast.makeText(getApplicationContext(), readMsg, Toast.LENGTH_LONG).show();
                     break;
+                case BluetoothState.BLUETOOTH_MESSAGE_WRITE :
+                    Log.i("asdasd", "BLUETOOTH_MESSAGE_WRITE");
+                    Message msg1 = (Message) msg.obj;
+                    Bundle bd = msg1.getData();
+                    String add = bd.getString(BluetoothState.EXTRA_DATA);
+                    Log.i("asdasd", add);
+                    Toast.makeText(getApplicationContext(), add, Toast.LENGTH_LONG).show();
+                    service.write(add.getBytes());
+                    break;
+                case BluetoothState.BLUETOOTH_MESSAGE_WRITE_SUCCESS :
+                    Log.i("asdasd", "BLUETOOTH_MESSAGE_WRITE_SUCCESS");
+                    byte[] bytes = (byte[]) msg.obj;
+                    String adds = new String(bytes, StandardCharsets.UTF_8);
+                    Log.i("asdasd", adds);
+                    Toast.makeText(getApplicationContext(), adds + " Write Success", Toast.LENGTH_LONG).show();
+                        break;
                 case BluetoothState.BLUETOOTH_MESSAGE_DEVICE_NAME :
                     String deviceName = msg.getData().getString(BluetoothState.DEVICE_NAME);
                     Toast.makeText(getApplicationContext(), deviceName, Toast.LENGTH_LONG).show();
@@ -106,6 +133,9 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
 
     private void setUpBT(){
         service = new BluetoothService(adapter, handler);
+        if(service != null){
+            Log.i("asdasd", "service not null");
+        }
     }
 
     @Override
@@ -114,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         setContentView(R.layout.activity_main);
 
         adapter = BluetoothAdapter.getDefaultAdapter();
-
+        setting = (ImageView)findViewById(R.id.setting);
         graph = (RelativeLayout)findViewById(R.id.graph);
         wrapper = (RelativeLayout)findViewById(R.id.wrapper);
         circularchart = (LinearLayout) findViewById(R.id.circularchart);
@@ -123,6 +153,26 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         precipitation = (RelativeLayout)findViewById(R.id.precipitation);
         temp = (TextView)findViewById(R.id.temp);
         weather_kor = (TextView)findViewById(R.id.weather_kor);
+        String address = getIntent().getExtras().getString(BluetoothState.EXTRA_DEVICE_ADDRESS);
+        Log.i("asdasd", address);
+        if(address != null){
+            Bundle b = new Bundle();
+            b.putString(BluetoothState.EXTRA_DEVICE_ADDRESS,address);
+            Message m = new Message();
+            m.setData(b);
+            handler.obtainMessage(BluetoothState.EXTRA_DEVICE_NUMBER , m).sendToTarget();
+        }
+        setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Message msg = new Message();
+                Bundle b = new Bundle();
+                Log.i("asdasd", "Welcome to Bluetooth for AITURE!");
+                b.putString(BluetoothState.EXTRA_DATA , "Welcome to Bluetooth for AITURE!");
+                msg.setData(b);
+                handler.obtainMessage(BluetoothState.BLUETOOTH_MESSAGE_WRITE, msg).sendToTarget();
+            }
+        });
         startSystem();
     }
 
@@ -131,13 +181,6 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
-            case BluetoothState.REQUEST_CONNECT_DEVICE :
-                if(resultCode == Activity.RESULT_OK){
-                    String address = data.getExtras().getString(BluetoothState.EXTRA_DEVICE_ADDRESS);
-                    BluetoothDevice device = adapter.getRemoteDevice(address);
-                    service.connect(device);
-                }
-                break;
             case BluetoothState.REQUEST_ENABLE_BT :
                 if(resultCode == Activity.RESULT_OK){
                     setUpBT();

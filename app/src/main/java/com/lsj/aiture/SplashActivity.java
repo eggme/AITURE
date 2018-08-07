@@ -14,10 +14,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tsengvn.typekit.TypekitContextWrapper;
@@ -29,7 +32,7 @@ public class SplashActivity extends AppCompatActivity implements NoActionBar{
     private ImageView img;
     private BluetoothAdapter adapter;
 
-
+    private AlertDialog.Builder aBuilder;
     private ArrayAdapter pariedDevice;
     private ArrayAdapter newDevice;
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -76,6 +79,10 @@ public class SplashActivity extends AppCompatActivity implements NoActionBar{
         pariedDevice = new ArrayAdapter(this, R.layout.layout_name);
         newDevice = new ArrayAdapter(this, R.layout.layout_name);
 
+        LayoutInflater inflater = getLayoutInflater();
+        View convertView = (View) inflater.inflate(R.layout.listview, null);
+
+
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.registerReceiver(receiver, filter);
 
@@ -93,29 +100,32 @@ public class SplashActivity extends AppCompatActivity implements NoActionBar{
                 pariedDevice.add("디바이스 없음");
             }
         }
-
-        AlertDialog.Builder aBuilder = new AlertDialog.Builder(SplashActivity.this);
+        aBuilder = new AlertDialog.Builder(SplashActivity.this);
         aBuilder.setTitle("연결할 디바이스를 고르세요.");
-        aBuilder.setAdapter(pariedDevice, (DialogInterface.OnClickListener) clickListener);
+        aBuilder.setView(convertView);
+
+        ListView lv = (ListView) convertView.findViewById(R.id.listview);
+        lv.setAdapter(pariedDevice);
+
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                adapter.cancelDiscovery();
+
+                String info = ((TextView)view).getText().toString();
+                String address = info.substring(info.length() - 17);
+                Log.i("asdasd", address + " : ASDASSADSAD");
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra(BluetoothState.EXTRA_DEVICE_ADDRESS, address);
+
+                setResult(Activity.RESULT_OK, intent);
+                startActivity(intent);
+                finish();
+            }
+        });
         Click();
     }
-
-    private AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            adapter.cancelDiscovery();
-
-            String info = ((TextView)view).getText().toString();
-            String address = info.substring(info.length() - 17);
-
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            intent.putExtra(BluetoothState.EXTRA_DEVICE_ADDRESS, address);
-
-            setResult(Activity.RESULT_OK, intent);
-            startActivity(intent);
-            finish();
-        }
-    };
 
     @Override
     protected void onDestroy() {
@@ -153,6 +163,7 @@ public class SplashActivity extends AppCompatActivity implements NoActionBar{
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                aBuilder.show();
                 doDiscovery();
 
             }

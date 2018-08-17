@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
@@ -16,8 +17,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -42,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
     private ImageView setting;
     private TextView temp;
     private TextView weather_kor;
+    private ImageView market;
+    private ListView listView;
+
     private CircularOutlineGraph circularOutlineGraph;
 
     private ArrayList<WeatherVO> weatherList;
@@ -54,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
 
     private final int PERMISSIONS_ACCESS_FINE_LOCATION = 1000;
     private final int PERMISSIONS_ACCESS_COARSE_LOCATION = 1001;
+    private final int BUYITEM = 12;
     private boolean isPermission = false;
     private boolean isAccessFineLocation = false;
     private boolean isAccessCoarseLocation = false;
@@ -153,6 +160,16 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
         precipitation = (RelativeLayout)findViewById(R.id.precipitation);
         temp = (TextView)findViewById(R.id.temp);
         weather_kor = (TextView)findViewById(R.id.weather_kor);
+        market = (ImageView)findViewById(R.id.market);
+        listView = (ListView)findViewById(R.id.listview);
+        market.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(MainActivity.this, MarketActivity.class);
+                startActivityForResult(in, BUYITEM);
+            }
+        });
+
         String address = getIntent().getExtras().getString(BluetoothState.EXTRA_DEVICE_ADDRESS);
         Log.i("asdasd", address);
         if(address != null){
@@ -184,6 +201,40 @@ public class MainActivity extends AppCompatActivity implements NoActionBar{
             case BluetoothState.REQUEST_ENABLE_BT :
                 if(resultCode == Activity.RESULT_OK){
                     setUpBT();
+                }
+                break;
+            case BUYITEM :
+                Log.i("asdasd", "BUYITEM");
+                // 리스트 업데이트
+                if(resultCode == Activity.RESULT_OK){
+                    SharedPreferences pref = getSharedPreferences("list", MODE_PRIVATE);
+                    GetMarketServerData marketServerData = new GetMarketServerData();
+                    marketServerData.execute();
+                    ArrayList<MarketVO> list = new ArrayList<>();
+                    try{
+                        list = marketServerData.get();
+                    }catch (Exception e){}
+
+                    if(list != null)
+                        Log.i("asdasd", list.size() + " : "+ pref.getString("item", ""));
+                    String choice = pref.getString("item", "");
+                    Log.i("asdasd", "프리퍼런스 저장된 값 "+ choice);
+                    ArrayList<MarketVO> newList = new ArrayList<>();
+
+                    for(int i=0;i<list.size();i++){
+                        if(list.get(i).getTitle().equals(choice))
+                            newList.add(list.get(i));
+                    }
+                    Log.i("asdasd", "옼게이");
+                    MainAdapter adapter = new MainAdapter(getApplicationContext(), R.layout.layout_main_listview, newList);
+                    listView.setAdapter(adapter);
+
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            // 소켓통신 데이터전송
+                        }
+                    });
                 }
                 break;
         }
